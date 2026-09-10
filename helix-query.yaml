@@ -1,0 +1,23 @@
+indices:
+  english: &default
+    include:
+      - /en/**
+    exclude:
+      - /en/snippets/**
+    target: /query-index.json
+    properties:
+      author:
+        select: head > meta[name="author"]
+        value: |
+          attribute(el, 'content')
+      title:
+        select: main h1:first-of-type
+        value: |
+          textContent(el)
+  french:
+    <<: *default
+    include:
+      - /fr/**
+    exclude:
+      - /fr/snippets/**
+    target: /fr/query-index.json
