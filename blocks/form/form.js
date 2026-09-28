@@ -639,6 +639,7 @@ function buildForm(fields, submit) {
 }
 
 /**
+<<<<<<< HEAD
  * Normalizes form rows returned by the AEM Forms JSON endpoint.
  * @param {Array<Object>} fields - Raw form field rows
  * @returns {Array<Object>} Fields in the format expected by the form builder
@@ -658,6 +659,8 @@ function normalizeFields(fields) {
 }
 
 /**
+=======
+>>>>>>> 0a3f258d90958d256e96ed4a2c33242e12dfa31d
  * Initializes form block with data from JSON endpoint
  * @param {HTMLElement} block - Form block element
  */
@@ -673,7 +676,11 @@ export default function decorate(block) {
                         if (!resp.ok) throw new Error(`${resp.status}: ${resp.statusText}`);
                         const { data } = await resp.json();
                         if (!data) throw new Error(`No form fields at ${source}`);
+<<<<<<< HEAD
                         const form = buildForm(normalizeFields(data), submit);
+=======
+                        const form = buildForm(data, submit);
+>>>>>>> 0a3f258d90958d256e96ed4a2c33242e12dfa31d
                         block.replaceChildren(form);
                         block.removeAttribute('style');
                     } catch (error) {

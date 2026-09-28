@@ -1,0 +1,157 @@
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+}
+
+.carousel-viewport {
+    overflow: hidden;
+}
+
+.carousel-track {
+    display: flex;
+    transition: transform .5s ease-in-out;
+}
+
+.carousel-slide {
+    position: relative;
+    min-width: 100%;
+}
+
+/* Image */
+.carousel-slide picture,
+.carousel-slide img {
+    display: block;
+    width: 100%;
+}
+
+.carousel-slide img {
+    width: 100%;
+    height: 650px;
+    object-fit: cover;
+}
+
+/* Dark Overlay */
+.carousel-slide::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 35%);
+    z-index: 1;
+}
+
+/* Text Wrapper */
+.carousel-slide > div:last-child {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+/* Container */
+.carousel-content {
+    width: min(1200px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+/* Heading */
+.carousel-content strong {
+    display: block;
+    font-size: 58px;
+    line-height: 1.2;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+/* Description */
+.carousel-content p {
+    color: #fff;
+    font-size: 22px;
+    line-height: 1.6;
+    max-width: 700px;
+}
+
+/* Buttons */
+.carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    background: rgb(255 255 255 / 85%);
+    color: #000;
+    font-size: 24px;
+    z-index: 10;
+}
+
+.carousel-btn:hover {
+    background: #fff;
+}
+
+.prev {
+    left: 20px;
+}
+
+.next {
+    right: 20px;
+}
+
+/* Dots */
+.carousel-dots {
+    position: absolute;
+    left: 50%;
+    bottom: 25px;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 10;
+}
+
+.carousel-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: none;
+    background: rgb(255 255 255 / 50%);
+    cursor: pointer;
+}
+
+.carousel-dot.active {
+    background: #fff;
+}
+
+@media (width >= 900px) {
+  .carousel-container .carousel-wrapper {
+    max-width: 100vw;
+    padding: 0;
+  }
+}
+
+/* Mobile */
+@media (width <= 768px) {
+  .carousel-slide img {
+    height: 420px;
+  }
+
+    .carousel-content {
+        width: calc(100% - 32px);
+    }
+
+    .carousel-content strong {
+        font-size: 36px;
+    }
+
+    .carousel-content p {
+        font-size: 18px;
+        max-width: 100%;
+    }
+
+    .carousel-btn {
+        width: 42px;
+        height: 42px;
+    }
+}
