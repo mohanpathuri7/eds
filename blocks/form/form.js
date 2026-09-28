@@ -156,7 +156,8 @@ async function buildOptionsFromUrl(url) {
     const resp = await fetch(url);
     const { data } = await resp.json();
     const options = data.map((o) => {
-        const { option, value } = o;
+        const option = o.option ?? o.Option;
+        const value = o.value ?? o.Value;
         const optionEl = createElement('option');
         if (option && value) {
             optionEl.value = value;
