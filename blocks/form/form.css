@@ -25,6 +25,10 @@
   font-size: var(--body-font-size-s);
 }
 
+.form input[type='hidden'] {
+  display: none;
+}
+
 .form textarea {
   resize: vertical;
 }
@@ -199,6 +203,83 @@
   margin-top: 0.2em;
   color: var(--dark-color);
   font-size: var(--body-font-size-xs);
+}
+
+/* validation error state */
+.form input[aria-invalid='true'],
+.form textarea[aria-invalid='true'],
+.form select[aria-invalid='true'] {
+  border-color: firebrick;
+  border-width: 2px;
+}
+
+.form .field-error {
+  margin-top: 0.3em;
+  color: firebrick;
+  font-size: var(--body-font-size-xs);
+}
+
+/* repeatable fieldset (e.g. Employment History) */
+.form fieldset.fieldset-field {
+  border: 1px solid var(--dark-color);
+  border-radius: 4px;
+  padding: 1em;
+}
+
+.form fieldset.fieldset-field > legend {
+  padding: 0 0.5em;
+  margin-left: -0.5em;
+}
+
+.form .fieldset-instances {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+.form .fieldset-instance + .fieldset-instance {
+  padding-top: 1em;
+  border-top: 1px solid var(--dark-color);
+}
+
+.form .fieldset-instance .form-field + .form-field {
+  margin-top: 1em;
+}
+
+.form button.add-instance,
+.form button.remove-instance {
+  appearance: none;
+  border-radius: 4px;
+  padding: 0.5em 1em;
+  font-size: var(--body-font-size-s);
+  cursor: pointer;
+}
+
+.form button.add-instance {
+  margin-top: 1em;
+  width: 100%;
+  border: 1px dashed var(--dark-color);
+  background-color: transparent;
+  color: var(--link-color);
+}
+
+.form button.add-instance:hover {
+  border-color: var(--link-color);
+  background-color: var(--light-color);
+}
+
+.form button.remove-instance {
+  margin-top: 0.5em;
+  border: 1px solid var(--dark-color);
+  background-color: transparent;
+  color: firebrick;
+  font-size: var(--body-font-size-xs);
+  padding: 0.25em 0.75em;
+}
+
+.form button.remove-instance:hover {
+  border-color: firebrick;
+  background-color: var(--light-color);
 }
 
 .form .button-wrapper {

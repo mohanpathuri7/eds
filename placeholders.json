@@ -1,0 +1,11 @@
+{
+  "total": 0,
+  "offset": 0,
+  "limit": 0,
+  "data": [],
+  "columns": [
+    "Key",
+    "Text"
+  ],
+  ":type": "sheet"
+}

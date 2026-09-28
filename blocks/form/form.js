@@ -1,6 +1,25 @@
 import { toCamelCase, toClassName } from '../../scripts/aem.js';
 
 /**
+ * Case-insensitive check for a "TRUE"-ish string coming from the sheet
+ * (Google Sheets serializes booleans as "TRUE"/"FALSE", not "true"/"false").
+ * @param {*} value
+ * @returns {boolean}
+ */
+function isTrue(value) {
+    return typeof value === 'string' && value.toLowerCase() === 'true';
+}
+
+/**
+ * Case-insensitive check for an explicit "FALSE"-ish string.
+ * @param {*} value
+ * @returns {boolean}
+ */
+function isExplicitFalse(value) {
+    return typeof value === 'string' && value.toLowerCase() === 'false';
+}
+
+/**
  * Creates an HTML element with an optional class name
  * @param {string} tag - HTML tag name
  * @param {string} [className] - Optional CSS class name
@@ -66,7 +85,7 @@ function buildInput(field) {
     input.type = type || 'text';
     input.id = generateId(fieldName);
     input.name = input.id;
-    input.required = required === 'true';
+    input.required = isTrue(required);
     if (defaultValue) input.value = defaultValue;
     if (placeholder) input.placeholder = placeholder;
     return input;
@@ -85,7 +104,7 @@ function buildTextArea(field) {
     const textarea = createElement('textarea');
     textarea.id = generateId(fieldName);
     textarea.name = textarea.id;
-    textarea.required = required === 'true';
+    textarea.required = isTrue(required);
     textarea.rows = 5;
     if (defaultValue) textarea.value = defaultValue;
     if (placeholder) textarea.placeholder = placeholder;
@@ -110,9 +129,45 @@ function buildOptionInput(field, option) {
     input.name = generateId(fieldName);
     input.value = option;
     input.checked = option === defaultValue;
-    input.required = required === 'true';
+    input.required = isTrue(required);
 
     return input;
+}
+
+/**
+ * Creates a single, standalone checkbox (e.g. a consent/agreement checkbox)
+ * that has no Options list — distinct from a checkbox *group*.
+ * @param {Object} field - Field configuration object
+ * @param {string} controlled - Controlled field name
+ * @returns {HTMLElement} Wrapper div containing the checkbox
+ */
+function buildSingleCheckbox(field, controlled) {
+    const {
+        field: fieldName, label, required, default: defaultValue, checked,
+    } = field;
+
+    const wrapper = createElement('div', 'form-field checkbox-field');
+    if (controlled) {
+        const controller = controlled.split('-')[0];
+        wrapper.dataset.controller = controller;
+        wrapper.dataset.condition = controlled;
+    }
+
+    const id = generateId(fieldName);
+    const input = createElement('input');
+    input.type = 'checkbox';
+    input.id = id;
+    input.name = id;
+    input.value = defaultValue || 'true';
+    input.checked = isTrue(checked);
+    input.required = isTrue(required);
+
+    const span = createElement('span');
+    const labelEl = buildLabel(label, 'label', id, isTrue(required));
+    labelEl.prepend(input, span);
+    wrapper.append(labelEl);
+
+    return wrapper;
 }
 
 /**
@@ -123,7 +178,7 @@ function buildOptionInput(field, option) {
  */
 function buildOptions(field, controlled) {
     const {
-        type, options, label, required,
+        type, options, optionNames, label, required,
     } = field;
     if (!options) return null;
 
@@ -133,13 +188,16 @@ function buildOptions(field, controlled) {
         fieldset.dataset.controller = controller;
         fieldset.dataset.condition = controlled;
     }
-    fieldset.append(buildLabel(label, 'legend', null, required === 'true'));
+    fieldset.append(buildLabel(label, 'legend', null, isTrue(required)));
 
-    options.split(',').forEach((o) => {
-        const option = o.trim();
+    const values = options.split(',').map((o) => o.trim());
+    const names = optionNames ? optionNames.split(',').map((n) => n.trim()) : values;
+
+    values.forEach((option, i) => {
+        const optionLabel = names[i] ?? option;
         const input = buildOptionInput(field, option);
         const span = createElement('span');
-        const labelEl = buildLabel(option, 'label', input.id);
+        const labelEl = buildLabel(optionLabel, 'label', input.id);
         labelEl.prepend(input, span);
         fieldset.append(labelEl);
     });
@@ -154,6 +212,7 @@ function buildOptions(field, controlled) {
  */
 async function buildOptionsFromUrl(url) {
     const resp = await fetch(url);
+    if (!resp.ok) throw new Error(`${resp.status}: ${resp.statusText}`);
     const { data } = await resp.json();
     const options = data.map((o) => {
         const option = o.option ?? o.Option;
@@ -182,7 +241,7 @@ async function buildOptionsFromUrl(url) {
  */
 function buildSelect(field, controlled) {
     const {
-        type, options, field: fieldName, label, required, placeholder,
+        type, options, optionNames, field: fieldName, label, required, placeholder,
     } = field;
     if (!options) return null;
 
@@ -192,12 +251,12 @@ function buildSelect(field, controlled) {
         wrapper.dataset.controller = controller;
         wrapper.dataset.condition = controlled;
     }
-    wrapper.append(buildLabel(label, 'label', generateId(fieldName), required === 'true'));
+    wrapper.append(buildLabel(label, 'label', generateId(fieldName), isTrue(required)));
 
     const select = createElement('select');
     select.id = generateId(fieldName);
     select.name = select.id;
-    select.required = required === 'true';
+    select.required = isTrue(required);
     wrapper.append(select);
 
     if (placeholder) {
@@ -211,15 +270,26 @@ function buildSelect(field, controlled) {
 
     try {
         const url = new URL(options);
-        buildOptionsFromUrl(url).then((os) => {
-            select.append(...os);
-        });
+        buildOptionsFromUrl(url)
+            .then((os) => {
+                select.append(...os);
+            })
+            .catch((error) => {
+                // eslint-disable-next-line no-console
+                console.error('Could not load options from', url.toString(), error);
+                const fallback = createElement('option');
+                fallback.value = '';
+                fallback.textContent = 'Unable to load options';
+                fallback.disabled = true;
+                select.append(fallback);
+            });
     } catch (error) {
-        options.split(',').forEach((o) => {
-            const option = o.trim();
+        const values = options.split(',').map((o) => o.trim());
+        const names = optionNames ? optionNames.split(',').map((n) => n.trim()) : values;
+        values.forEach((option, i) => {
             const optionEl = createElement('option');
             optionEl.value = option;
-            optionEl.textContent = option;
+            optionEl.textContent = names[i] ?? option;
             select.append(optionEl);
         });
     }
@@ -254,7 +324,7 @@ function buildToggle(field, controlled) {
     });
 
     const span = createElement('span');
-    const labelEl = buildLabel(label, 'label', input.id, required === 'true');
+    const labelEl = buildLabel(label, 'label', input.id, isTrue(required));
     labelEl.prepend(input, span);
     wrapper.append(labelEl);
 
@@ -493,6 +563,40 @@ async function handleSubmit(form) {
 }
 
 /**
+ * Shows a visible error message under an invalid field and marks it invalid.
+ * @param {HTMLElement} input - The invalid form control
+ */
+function showFieldError(input) {
+    input.setAttribute('aria-invalid', 'true');
+    let error = input.nextElementSibling;
+    if (!error || !error.classList.contains('field-error')) {
+        error = createElement('p', 'field-error');
+        error.setAttribute('role', 'alert');
+        input.insertAdjacentElement('afterend', error);
+    }
+    error.id = error.id || `${input.id || 'field'}-error`;
+    error.textContent = input.validationMessage || 'This field is invalid.';
+
+    const describedBy = (input.getAttribute('aria-describedby') || '').split(' ').filter(Boolean);
+    if (!describedBy.includes(error.id)) {
+        describedBy.push(error.id);
+        input.setAttribute('aria-describedby', describedBy.join(' '));
+    }
+}
+
+/**
+ * Clears a previously shown field error, if any.
+ * @param {HTMLElement} input - The form control to clear
+ */
+function clearFieldError(input) {
+    input.removeAttribute('aria-invalid');
+    const error = input.nextElementSibling;
+    if (error && error.classList.contains('field-error')) {
+        error.remove();
+    }
+}
+
+/**
  * Sets up form submission handler
  * @param {HTMLFormElement} form - Form element
  * @param {string} submit - Submit URL
@@ -508,25 +612,36 @@ function enableSubmission(form, submit, fields) {
     form.addEventListener('submit', (e) => {
         e.preventDefault();
 
+        // clear any stale errors from a previous attempt before re-checking
+        [...form.querySelectorAll('[aria-invalid="true"]')].forEach((el) => clearFieldError(el));
+
         const valid = form.reportValidity();
+
         if (valid) {
             handleSubmit(form);
-        } else {
-            const firstInvalid = form.querySelector(':invalid:not(fieldset)');
-            if (firstInvalid) {
-                firstInvalid.focus();
-                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                firstInvalid.setAttribute('aria-invalid', true);
-            }
+            return;
+        }
+
+        const invalidFields = [...form.querySelectorAll(':invalid')]
+            .filter((el) => el.tagName !== 'FIELDSET');
+        invalidFields.forEach((el) => showFieldError(el));
+
+        const firstInvalid = invalidFields[0];
+        if (firstInvalid) {
+            firstInvalid.focus();
+            firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
     });
 
-    // clear aria-invalid on field change
+    // clear the error as soon as the field becomes valid again
     form.addEventListener('input', (e) => {
-        if (e.target.hasAttribute('aria-invalid')) {
-            if (e.target.validity.valid) {
-                e.target.removeAttribute('aria-invalid');
-            }
+        if (e.target.hasAttribute('aria-invalid') && e.target.validity.valid) {
+            clearFieldError(e.target);
+        }
+    });
+    form.addEventListener('change', (e) => {
+        if (e.target.hasAttribute('aria-invalid') && e.target.validity.valid) {
+            clearFieldError(e.target);
         }
     });
 }
@@ -538,18 +653,42 @@ function enableSubmission(form, submit, fields) {
  */
 function buildField(field) {
     const {
-        type, label, help, field: fieldName, conditional,
+        type, label, help, field: fieldName, conditional, visible,
     } = field;
     const controlled = conditional || null;
+
+    // fields explicitly marked Visible=FALSE become hidden inputs, not rendered fields
+    if (isExplicitFalse(visible)) {
+        const hidden = createElement('input');
+        hidden.type = 'hidden';
+        hidden.id = generateId(fieldName);
+        hidden.name = hidden.id;
+        if (field.default) hidden.value = field.default;
+        return hidden;
+    }
 
     // submit/reset buttons stand alone
     if (type === 'submit' || type === 'reset') {
         return buildButton(field);
     }
 
-    // radio/checkbox groups get a fieldset
+    // radio/checkbox groups get a fieldset; a checkbox with no Options is a
+    // standalone agreement-style checkbox (e.g. a consent checkbox)
     if (type === 'radio' || type === 'checkbox') {
+        if (type === 'checkbox' && !field.options) {
+            const single = buildSingleCheckbox(field, controlled);
+            if (help) {
+                const helpText = writeHelpText(help, generateId(fieldName));
+                single.append(helpText);
+            }
+            return single;
+        }
         const fieldset = buildOptions(field, controlled);
+        if (!fieldset) {
+            // eslint-disable-next-line no-console
+            console.error(`Radio field "${fieldName}" has no Options configured`);
+            return null;
+        }
         if (help) {
             const helpText = writeHelpText(help, generateId(fieldName));
             fieldset.append(helpText);
@@ -583,7 +722,7 @@ function buildField(field) {
         wrapper.dataset.condition = controlled;
     }
     const inputId = generateId(fieldName);
-    wrapper.append(buildLabel(label, 'label', inputId, field.required === 'true'));
+    wrapper.append(buildLabel(label, 'label', inputId, isTrue(field.required)));
 
     // create help text first to get id
     let helpText;
@@ -606,6 +745,69 @@ function buildField(field) {
 }
 
 /**
+ * Builds one repeatable "instance" of a fieldset's child fields, with each
+ * child field's name suffixed by the instance index so inputs don't collide.
+ * @param {Array<Object>} childFields - Field configs belonging to this fieldset
+ * @param {number} index - Instance index (0-based)
+ * @param {boolean} removable - Whether to show a "Remove" button on this instance
+ * @returns {HTMLElement} Wrapper div for this instance
+ */
+function buildFieldsetInstance(childFields, index, removable) {
+    const instance = createElement('div', 'fieldset-instance');
+
+    childFields.forEach((child) => {
+        const indexedField = { ...child, field: `${child.field}_${index}` };
+        const el = buildField(indexedField);
+        if (el) instance.append(el);
+    });
+
+    if (removable) {
+        const removeBtn = createElement('button', 'remove-instance');
+        removeBtn.type = 'button';
+        removeBtn.textContent = 'Remove';
+        removeBtn.addEventListener('click', () => instance.remove());
+        instance.append(removeBtn);
+    }
+
+    return instance;
+}
+
+/**
+ * Builds a <fieldset> grouping its child fields, with support for the
+ * Repeatable column (an "Add another" button that clones the child fields).
+ * @param {Object} field - The fieldset's own field configuration
+ * @param {Array<Object>} childFields - Field configs whose Fieldset column matches this one
+ * @returns {HTMLFieldSetElement} The built fieldset
+ */
+function buildFieldsetField(field, childFields) {
+    const { label, required, repeatable } = field;
+
+    const fieldset = createElement('fieldset', 'form-field fieldset-field');
+    fieldset.append(buildLabel(label, 'legend', null, isTrue(required)));
+
+    const instancesWrapper = createElement('div', 'fieldset-instances');
+    fieldset.append(instancesWrapper);
+
+    let count = 0;
+    const addInstance = () => {
+        const removable = isTrue(repeatable) && count > 0;
+        instancesWrapper.append(buildFieldsetInstance(childFields, count, removable));
+        count += 1;
+    };
+    addInstance(); // always start with exactly one instance
+
+    if (isTrue(repeatable)) {
+        const addBtn = createElement('button', 'add-instance');
+        addBtn.type = 'button';
+        addBtn.textContent = '+ Add another';
+        addBtn.addEventListener('click', addInstance);
+        fieldset.append(addBtn);
+    }
+
+    return fieldset;
+}
+
+/**
  * Creates a complete form from field configurations
  * @param {Array<Object>} fields - Array of field configurations
  * @returns {HTMLFormElement} Complete form element
@@ -617,11 +819,29 @@ function buildForm(fields, submit) {
     // group buttons at the end
     const buttons = [];
 
+    // group child fields (rows whose Fieldset column is set) by their parent fieldset name
+    const childrenByFieldset = new Map();
+    fields.forEach((f) => {
+        if (f.fieldset) {
+            if (!childrenByFieldset.has(f.fieldset)) childrenByFieldset.set(f.fieldset, []);
+            childrenByFieldset.get(f.fieldset).push(f);
+        }
+    });
+    const fieldsetNames = new Set(fields.filter((f) => f.type === 'fieldset').map((f) => f.field));
+
     fields.forEach((field) => {
         if (field.type === 'submit' || field.type === 'reset') {
             buttons.push(field);
-        } else if (field.type !== 'confirmation') {
-            form.append(buildField(field));
+        } else if (field.type === 'confirmation') {
+            // handled separately in enableSubmission
+        } else if (field.type === 'fieldset') {
+            const children = childrenByFieldset.get(field.field) || [];
+            form.append(buildFieldsetField(field, children));
+        } else if (field.fieldset && fieldsetNames.has(field.fieldset)) {
+            // this field is rendered inside its parent fieldset above; skip standalone
+        } else {
+            const el = buildField(field);
+            if (el) form.append(el);
         }
     });
 
@@ -655,6 +875,11 @@ function normalizeFields(fields) {
         default: field.default ?? field.Value,
         required: field.required ?? field.Mandatory,
         options: field.options ?? field.Options,
+        optionNames: field.optionNames ?? field.OptionNames,
+        checked: field.checked ?? field.Checked,
+        visible: field.visible ?? field.Visible,
+        fieldset: field.fieldset ?? field.Fieldset,
+        repeatable: field.repeatable ?? field.Repeatable,
     }));
 }
 
