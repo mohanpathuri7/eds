@@ -540,8 +540,10 @@ async function handleSubmit(form) {
     const response = await fetch(form.dataset.action, {
       method: 'POST',
       body: JSON.stringify({ data: payload }),
+      // text/plain avoids the CORS preflight request, which Google Apps Script
+      // web apps cannot answer. The script still parses the body as JSON.
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'text/plain;charset=utf-8',
       },
     });
     if (response.ok) {
