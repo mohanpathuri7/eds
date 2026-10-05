@@ -528,6 +528,22 @@ function showFormMessage(form, message, isError = false) {
 }
 
 /**
+ * Clears the form after a successful submission: empties all fields, removes
+ * extra repeatable fieldset entries and clears any leftover validation errors.
+ * @param {HTMLFormElement} form - Form element
+ */
+function resetForm(form) {
+  form.reset();
+  [...form.querySelectorAll('.fieldset-field')].forEach((fs) => {
+    fs.dispatchEvent(new Event('reset-instances'));
+  });
+  [...form.querySelectorAll('[aria-invalid="true"]')].forEach((el) => {
+    el.removeAttribute('aria-invalid');
+  });
+  [...form.querySelectorAll('.field-error')].forEach((el) => el.remove());
+}
+
+/**
  * Handles form submission
  * @param {HTMLFormElement} form - Form element to submit
  * @returns {Promise<void>}
@@ -550,7 +566,8 @@ async function handleSubmit(form) {
       if (form.dataset.confirmation) {
         window.location.href = form.dataset.confirmation;
       } else {
-        showFormMessage(form, 'Your submission was received.');
+        resetForm(form);
+        showFormMessage(form, form.dataset.successMessage || 'Your submission was received.');
       }
     } else {
       const error = await response.text();
@@ -618,6 +635,11 @@ function enableSubmission(form, submit, fields) {
   const confirmation = fields.find((f) => f.type === 'confirmation');
   if (confirmation) {
     form.dataset.confirmation = confirmation.label || confirmation.default;
+  }
+  // the Placeholder of the submit row is used as the thank-you message
+  const submitField = fields.find((f) => f.type === 'submit');
+  if (submitField && submitField.placeholder) {
+    form.dataset.successMessage = submitField.placeholder;
   }
 
   form.addEventListener('submit', (e) => {
@@ -813,6 +835,13 @@ function buildFieldsetField(field, childFields) {
     count += 1;
   };
   addInstance(); // always start with exactly one instance
+
+  // lets resetForm() put the fieldset back to a single empty instance
+  fieldset.addEventListener('reset-instances', () => {
+    instancesWrapper.replaceChildren();
+    count = 0;
+    addInstance();
+  });
 
   if (isTrue(repeatable)) {
     const addBtn = createElement('button', 'add-instance');
