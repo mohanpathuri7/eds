@@ -32,7 +32,9 @@ function createElement(tag, className) {
 }
 
 /**
- * Generates a camelCase ID from a name and optional option
+ * Generates a camelCase ID from a name and optional option.
+ * NOTE: ids are normalized (lowercased by toClassName). Input *names* are NOT
+ * normalized, so submitted keys match the sheet's `incoming` headers exactly.
  * @param {string} name - Base name for the ID
  * @param {string} [option] - Optional value to append to the ID
  * @returns {string} Generated camelCase ID
@@ -84,7 +86,7 @@ function buildInput(field) {
     const input = createElement('input');
     input.type = type || 'text';
     input.id = generateId(fieldName);
-    input.name = input.id;
+    input.name = fieldName;
     input.required = isTrue(required);
     if (defaultValue) input.value = defaultValue;
     if (placeholder) input.placeholder = placeholder;
@@ -103,7 +105,7 @@ function buildTextArea(field) {
 
     const textarea = createElement('textarea');
     textarea.id = generateId(fieldName);
-    textarea.name = textarea.id;
+    textarea.name = fieldName;
     textarea.required = isTrue(required);
     textarea.rows = 5;
     if (defaultValue) textarea.value = defaultValue;
@@ -126,7 +128,7 @@ function buildOptionInput(field, option) {
     const input = createElement('input');
     input.type = type;
     input.id = id;
-    input.name = generateId(fieldName);
+    input.name = fieldName;
     input.value = option;
     input.checked = option === defaultValue;
     input.required = isTrue(required);
@@ -157,7 +159,7 @@ function buildSingleCheckbox(field, controlled) {
     const input = createElement('input');
     input.type = 'checkbox';
     input.id = id;
-    input.name = id;
+    input.name = fieldName;
     input.value = defaultValue || 'true';
     input.checked = isTrue(checked);
     input.required = isTrue(required);
@@ -255,7 +257,7 @@ function buildSelect(field, controlled) {
 
     const select = createElement('select');
     select.id = generateId(fieldName);
-    select.name = select.id;
+    select.name = fieldName;
     select.required = isTrue(required);
     wrapper.append(select);
 
@@ -347,6 +349,27 @@ function buildButton(field) {
 }
 
 /**
+ * Updates visibility and validation state for a conditional field and all of
+ * its controls.
+ * @param {HTMLElement} field - The conditional field wrapper
+ * @param {boolean} visible - Whether the field should be visible
+ */
+function setConditionalFieldVisibility(field, visible) {
+    field.setAttribute('aria-hidden', !visible);
+    [...field.querySelectorAll('input, textarea, select')].forEach((input) => {
+        if (input.hasAttribute('required')) input.dataset.originalRequired = 'true';
+
+        if (visible) {
+            if (input.dataset.originalRequired === 'true') input.setAttribute('required', '');
+            input.removeAttribute('tabindex');
+        } else {
+            input.removeAttribute('required');
+            input.setAttribute('tabindex', '-1');
+        }
+    });
+}
+
+/**
  * Toggles visibility of conditional fields based on the selected input
  * @param {Event} e - Change event
  * @param {Map} controllerConfig - Map of controller names to controlled fields
@@ -356,23 +379,11 @@ function toggleConditional(e, controllerConfig) {
     const controller = target.name;
     // check if this is a controlling input
     if (controllerConfig.has(controller)) {
-        const inputs = [...controllerConfig.get(controller)];
-        inputs.forEach((i) => {
-            const field = i.closest('.form-field');
+        const fields = controllerConfig.get(controller);
+        fields.forEach((field) => {
             const { condition } = field.dataset;
             const conditionMet = condition.includes(toClassName(target.value));
-            field.setAttribute('aria-hidden', !conditionMet);
-
-            // toggle required and tabindex based on visibility
-            if (conditionMet) {
-                if (i.dataset.originalRequired === 'true') {
-                    i.setAttribute('required', '');
-                }
-                i.removeAttribute('tabindex');
-            } else {
-                i.removeAttribute('required');
-                i.setAttribute('tabindex', '-1'); // remove from tab order when hidden
-            }
+            setConditionalFieldVisibility(field, conditionMet);
         });
     }
 }
@@ -398,49 +409,14 @@ function initConditionals(form, controllerConfig) {
 
         if (controllerValue) {
             // set correct visibility for each controlled field
-            controlledInputs.forEach((input) => {
-                const field = input.closest('.form-field');
+            controlledInputs.forEach((field) => {
                 const { condition } = field.dataset;
                 const conditionMet = condition.includes(toClassName(controllerValue));
-                field.setAttribute('aria-hidden', !conditionMet);
-
-                // store original required state and toggle based on visibility
-                if (input.hasAttribute('required')) {
-                    // store original required state if not already stored
-                    if (!input.dataset.originalRequired) {
-                        input.dataset.originalRequired = 'true';
-                    }
-
-                    if (!conditionMet) {
-                        input.removeAttribute('required');
-                    }
-                }
-
-                // remove from tab order when hidden
-                if (conditionMet) {
-                    input.removeAttribute('tabindex');
-                } else {
-                    input.setAttribute('tabindex', '-1');
-                }
+                setConditionalFieldVisibility(field, conditionMet);
             });
         } else {
             // if no input is checked, hide all controlled fields
-            controlledInputs.forEach((input) => {
-                const field = input.closest('.form-field');
-                field.setAttribute('aria-hidden', true);
-
-                // remove required attribute when hidden
-                if (input.hasAttribute('required')) {
-                    // store original required state if not already stored
-                    if (!input.dataset.originalRequired) {
-                        input.dataset.originalRequired = 'true';
-                    }
-                    input.removeAttribute('required');
-                }
-
-                // remove from tab order when hidden
-                input.setAttribute('tabindex', '-1');
-            });
+            controlledInputs.forEach((field) => setConditionalFieldVisibility(field, false));
         }
     });
 }
@@ -457,15 +433,17 @@ function enableConditionals(form) {
     const controllerConfig = new Map();
 
     controlled.forEach((c) => {
-        const input = c.querySelector('input, textarea, select');
         const { controller } = c.dataset;
 
-        // add to controller map
+        // Track the whole field so grouped controls share visibility and validity.
         if (!controllerConfig.has(controller)) controllerConfig.set(controller, []);
-        controllerConfig.get(controller).push(input);
+        controllerConfig.get(controller).push(c);
 
         // set up aria relationships
-        if (input && input.id) {
+        const inputs = [...c.querySelectorAll('input, textarea, select')];
+        inputs.forEach((input) => {
+            if (!input.id) return;
+
             // find the controlling input(s)
             const controllerInputs = form.querySelectorAll(`[name="${controller}"]`);
 
@@ -486,7 +464,7 @@ function enableConditionals(form) {
                 // set aria-controlledby on the controlled input
                 input.setAttribute('aria-controlledby', controllerInput.id);
             });
-        }
+        });
     });
 
     // initialize conditional visibility
@@ -510,14 +488,16 @@ function toggleForm(form, disabled = true) {
 }
 
 /**
- * Generates form submission payload from form elements
+ * Generates form submission payload from form elements.
+ * File inputs are skipped: a spreadsheet can't store an uploaded file, and the
+ * browser would otherwise submit a meaningless fake path.
  * @param {HTMLFormElement} form - Form element
  * @returns {Object} Payload object with form data
  */
 function generatePayload(form) {
     const payload = {};
     [...form.elements].forEach((field) => {
-        if (field.name && !field.disabled) {
+        if (field.name && !field.disabled && field.type !== 'file') {
             if (field.type === 'radio') {
                 if (field.checked) payload[field.name] = field.value;
             } else if (field.type === 'checkbox') {
@@ -531,12 +511,30 @@ function generatePayload(form) {
 }
 
 /**
+ * Displays submission feedback to the user.
+ * @param {HTMLFormElement} form - Form element
+ * @param {string} message - Feedback text
+ * @param {boolean} [isError=false] - Whether the message reports an error
+ */
+function showFormMessage(form, message, isError = false) {
+    let status = form.querySelector('.form-message');
+    if (!status) {
+        status = createElement('p', 'form-message');
+        form.append(status);
+    }
+    status.textContent = message;
+    status.setAttribute('role', isError ? 'alert' : 'status');
+    status.classList.toggle('error', isError);
+}
+
+/**
  * Handles form submission
  * @param {HTMLFormElement} form - Form element to submit
  * @returns {Promise<void>}
  */
 async function handleSubmit(form) {
     try {
+        // build the payload BEFORE disabling the form (disabled fields are skipped)
         const payload = generatePayload(form);
         toggleForm(form);
         const response = await fetch(form.dataset.action, {
@@ -549,14 +547,17 @@ async function handleSubmit(form) {
         if (response.ok) {
             if (form.dataset.confirmation) {
                 window.location.href = form.dataset.confirmation;
+            } else {
+                showFormMessage(form, 'Your submission was received.');
             }
         } else {
             const error = await response.text();
-            throw new Error(error);
+            throw new Error(`${response.status}: ${error}`);
         }
     } catch (error) {
         // eslint-disable-next-line no-console
-        console.error(error);
+        console.error('Form submission failed:', error);
+        showFormMessage(form, 'We could not submit your form. Please try again.', true);
     } finally {
         toggleForm(form, false);
     }
@@ -592,6 +593,14 @@ function clearFieldError(input) {
     input.removeAttribute('aria-invalid');
     const error = input.nextElementSibling;
     if (error && error.classList.contains('field-error')) {
+        const describedBy = (input.getAttribute('aria-describedby') || '')
+            .split(' ')
+            .filter((id) => id && id !== error.id);
+        if (describedBy.length) {
+            input.setAttribute('aria-describedby', describedBy.join(' '));
+        } else {
+            input.removeAttribute('aria-describedby');
+        }
         error.remove();
     }
 }
@@ -603,7 +612,7 @@ function clearFieldError(input) {
  * @param {Array<Object>} fields - Array of field configurations
  */
 function enableSubmission(form, submit, fields) {
-    form.dataset.action = submit;
+    if (submit) form.dataset.action = submit;
     const confirmation = fields.find((f) => f.type === 'confirmation');
     if (confirmation) {
         form.dataset.confirmation = confirmation.label || confirmation.default;
@@ -618,6 +627,10 @@ function enableSubmission(form, submit, fields) {
         const valid = form.reportValidity();
 
         if (valid) {
+            if (!form.dataset.action) {
+                showFormMessage(form, 'This form is not configured to submit. Please contact the site owner.', true);
+                return;
+            }
             handleSubmit(form);
             return;
         }
@@ -662,7 +675,7 @@ function buildField(field) {
         const hidden = createElement('input');
         hidden.type = 'hidden';
         hidden.id = generateId(fieldName);
-        hidden.name = hidden.id;
+        hidden.name = fieldName;
         if (field.default) hidden.value = field.default;
         return hidden;
     }
@@ -745,8 +758,9 @@ function buildField(field) {
 }
 
 /**
- * Builds one repeatable "instance" of a fieldset's child fields, with each
- * child field's name suffixed by the instance index so inputs don't collide.
+ * Builds one repeatable "instance" of a fieldset's child fields.
+ * The first instance keeps the original field names (so they match the sheet's
+ * `incoming` headers); additional instances get a numeric suffix (_1, _2, ...).
  * @param {Array<Object>} childFields - Field configs belonging to this fieldset
  * @param {number} index - Instance index (0-based)
  * @param {boolean} removable - Whether to show a "Remove" button on this instance
@@ -756,7 +770,9 @@ function buildFieldsetInstance(childFields, index, removable) {
     const instance = createElement('div', 'fieldset-instance');
 
     childFields.forEach((child) => {
-        const indexedField = { ...child, field: `${child.field}_${index}` };
+        const indexedField = index === 0
+            ? { ...child }
+            : { ...child, field: `${child.field}_${index}` };
         const el = buildField(indexedField);
         if (el) instance.append(el);
     });
@@ -810,6 +826,7 @@ function buildFieldsetField(field, childFields) {
 /**
  * Creates a complete form from field configurations
  * @param {Array<Object>} fields - Array of field configurations
+ * @param {string} submit - Submit URL
  * @returns {HTMLFormElement} Complete form element
  */
 function buildForm(fields, submit) {
@@ -854,7 +871,7 @@ function buildForm(fields, submit) {
 
     enableConditionals(form);
 
-    if (submit) enableSubmission(form, submit, fields);
+    enableSubmission(form, submit, fields);
 
     return form;
 }
@@ -864,7 +881,6 @@ function buildForm(fields, submit) {
  * @param {Array<Object>} fields - Raw form field rows
  * @returns {Array<Object>} Fields in the format expected by the form builder
  */
-
 function normalizeFields(fields) {
     return fields.map((field) => ({
         ...field,
@@ -884,6 +900,19 @@ function normalizeFields(fields) {
 }
 
 /**
+ * Derives the submit URL from the form definition URL when no second link is
+ * given: /forms/contact-us.json -> /forms/contact-us
+ * @param {string} source - Form definition (.json) URL
+ * @returns {string} Submit URL
+ */
+function defaultSubmitUrl(source) {
+    const url = new URL(source, window.location.origin);
+    url.pathname = url.pathname.replace(/\.json$/, '');
+    url.search = '';
+    return url.toString();
+}
+
+/**
  * Initializes form block with data from JSON endpoint
  * @param {HTMLElement} block - Form block element
  */
@@ -899,7 +928,8 @@ export default function decorate(block) {
                         if (!resp.ok) throw new Error(`${resp.status}: ${resp.statusText}`);
                         const { data } = await resp.json();
                         if (!data) throw new Error(`No form fields at ${source}`);
-                        const form = buildForm(normalizeFields(data), submit);
+                        const action = submit || defaultSubmitUrl(source);
+                        const form = buildForm(normalizeFields(data), action);
                         block.replaceChildren(form);
                         block.removeAttribute('style');
                     } catch (error) {

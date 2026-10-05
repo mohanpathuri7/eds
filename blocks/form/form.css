@@ -219,6 +219,15 @@
   font-size: var(--body-font-size-xs);
 }
 
+.form .form-message {
+  margin-top: 1em;
+  color: var(--text-color);
+}
+
+.form .form-message.error {
+  color: firebrick;
+}
+
 /* repeatable fieldset (e.g. Employment History) */
 .form fieldset.fieldset-field {
   border: 1px solid var(--dark-color);
