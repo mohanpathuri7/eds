@@ -7,6 +7,7 @@ footer .footer {
   font-family: var(--body-font-family, Inter, 'Helvetica Neue', Arial, sans-serif);
   font-size: 18px;
   line-height: 1.55;
+  border-top: 1px solid var(--border, rgb(255 255 255 / 8%));
 }
 
 footer .footer > div {

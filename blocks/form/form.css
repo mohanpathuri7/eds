@@ -1,3 +1,146 @@
+/* =====================================================================
+   CSS-ONLY version: no HTML / JS changes needed.
+   Colors and sizes measured from the 1440px-wide screenshot.
+   Variables are scoped to the contact section so nothing else on the
+   site is affected.
+   ===================================================================== */
+.section.form-container {
+  --background-color: #0b0f19;
+  --text-color: #e6e9f0;
+  --muted-color: #9aa3b5;
+  --light-color: #121826;
+  --dark-color: #1e2638;
+  --link-color: #6366f1;
+  --body-font-size-s: 16px;
+  --body-font-size-xs: 14px;
+
+  min-height: 68vh;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: start;
+  margin: 0 auto;
+}
+
+/* ---------- Two-column layout ---------- */
+@media (width >= 800px) {
+  .section.form-container {
+    flex-direction: row;
+    gap: 3rem;
+    width: 1200px;
+  }
+
+  .section.form-container .default-content-wrapper {
+    width: 50%;
+    margin: 0;
+    padding: 0;
+  }
+
+  .section.form-container .form-wrapper {
+    width: 50%;
+    margin-top: 58px;
+    padding: 0;
+  }
+}
+
+/* ---------- Left column ---------- */
+.form-container .default-content-wrapper {
+  width: inherit;
+  margin: 0;
+  padding: 0 1rem;
+}
+
+.section.form-container .default-content-wrapper h1 {
+  margin: 0 0 0.2em;
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+/* "Contact US" -> "Contact" */
+.section.form-container .default-content-wrapper h1 strong {
+  font-size: 0;
+}
+
+.section.form-container .default-content-wrapper h1 strong::before {
+  content: 'Contact';
+  font-size: 2.4rem;
+  font-weight: 800;
+}
+
+.section.form-container .default-content-wrapper p {
+  margin: 0;
+  color: var(--muted-color);
+}
+
+/* the two intro <p> tags flow as one paragraph */
+.section.form-container .default-content-wrapper p:nth-of-type(1),
+.section.form-container .default-content-wrapper p:nth-of-type(2) {
+  display: inline;
+  font-size: 1.125rem;
+  line-height: 33px;
+}
+
+.section.form-container .default-content-wrapper p:nth-of-type(1)::after {
+  content: ' ';
+}
+
+/* email / LinkedIn lines */
+.section.form-container .default-content-wrapper p:nth-of-type(3) {
+  margin: 22px 0 24px;
+  font-size: 1rem;
+  line-height: 28px;
+}
+
+.section.form-container .default-content-wrapper a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* "Linkedln" typo -> "LinkedIn" */
+.section.form-container .default-content-wrapper a[href*='linkedin.com'] {
+  font-size: 0;
+}
+
+.section.form-container .default-content-wrapper a[href*='linkedin.com']::before {
+  content: 'LinkedIn';
+  font-size: 1rem;
+}
+
+/* "Download resume" outlined button */
+.section.form-container .default-content-wrapper p:last-child {
+  display: flex;
+  margin: 0;
+}
+
+.section.form-container .default-content-wrapper p:last-child a {
+  display: inline-block;
+  border: 1px solid #252d40;
+  border-radius: 12px;
+  padding: 18px 26px;
+  color: #fff;
+  font-weight: 600;
+  line-height: 20px;
+}
+
+.section.form-container .default-content-wrapper p:last-child a:hover {
+  border-color: var(--link-color);
+}
+
+/* ---------- Form card ---------- */
+.form-container .form-wrapper {
+  width: inherit;
+  margin: 0;
+}
+
+.form-wrapper .form {
+  border: 1px solid var(--dark-color);
+  border-radius: 16px;
+  padding: 26px;
+  background-color: var(--light-color);
+}
+
+
+/* ---------- Form base ---------- */
 .form [aria-hidden='true'] {
   display: none;
 }
@@ -18,11 +161,17 @@
   scroll-margin: 1em;
   width: 100%;
   border: 1px solid var(--dark-color);
-  border-radius: 4px;
-  padding: 0.5em 0.75em;
+  border-radius: 12px;
+  padding: 1.1em 1em;
   background-color: var(--background-color);
   color: var(--text-color);
   font-size: var(--body-font-size-s);
+  line-height: 1.2;
+}
+
+.form input[type='text'],
+.form input[type='email'] {
+  height: 58px;
 }
 
 .form input[type='hidden'] {
@@ -30,6 +179,7 @@
 }
 
 .form textarea {
+  height: 130px;
   resize: vertical;
 }
 
@@ -43,9 +193,8 @@
 
 .form input:hover,
 .form textarea:hover,
-.form select:hover,
-.form button:hover {
-  border-color: var(--link-color);
+.form select:hover {
+  border-color: #2e3850;
 }
 
 .form input:focus,
@@ -53,6 +202,14 @@
 .form select:focus,
 .form button:focus {
   outline-offset: 4px;
+}
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+  border-color: var(--link-color);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgb(99 102 241 / 25%);
 }
 
 .form input:disabled,
@@ -67,9 +224,10 @@
 .form input[readonly],
 .form textarea[readonly],
 .form select[readonly] {
-  border-color: #d1d1d1;
+  border-color: var(--dark-color);
   background-color: var(--light-color);
-  color: var(--dark-color);
+  color: var(--muted-color);
+  box-shadow: none;
 }
 
 .form input[readonly]:focus,
@@ -83,6 +241,7 @@
   width: unset;
 }
 
+/* ---------- Labels ---------- */
 .form label,
 .form legend {
   display: block;
@@ -101,7 +260,17 @@
 }
 
 .form .form-field + .form-field {
-  margin-top: 1em;
+  margin-top: 14px;
+}
+
+/* ---------- Checkbox / radio ---------- */
+.form .form-field.toggle-field label {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 1ch;
+  min-height: 44px;
 }
 
 .form .form-field.checkbox-field label,
@@ -111,6 +280,63 @@
   font-size: var(--body-font-size-s);
   line-height: 44px;
   cursor: pointer;
+}
+
+/* Name / Email / Message: labels become placeholder-style text
+   inside the fields (CSS can't add real placeholders) */
+.form .text-field,
+.form .email-field,
+.form .textarea-field {
+  position: relative;
+}
+
+.form .text-field > label:first-child,
+.form .email-field > label:first-child,
+.form .textarea-field > label:first-child {
+  position: absolute;
+  top: 0;
+  left: 17px;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  height: 58px;
+  margin: 0;
+  color: #6b7488;
+  font-size: var(--body-font-size-s);
+  font-weight: 400;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.form .textarea-field > label:first-child {
+  top: 19px;
+  height: auto;
+  align-items: flex-start;
+}
+
+/* no asterisks, as in the screenshot */
+.form .text-field > label[data-required]::after,
+.form .email-field > label[data-required]::after,
+.form .textarea-field > label[data-required]::after {
+  content: none;
+}
+
+/* "Email Address" -> "Email" */
+.form .email-field > label:first-child {
+  visibility: hidden;
+}
+
+.form .email-field > label:first-child::before {
+  content: 'Email';
+  visibility: visible;
+}
+
+/* hide the fake placeholder while focused, filled, or flagged invalid */
+.form .form-field:has([aria-invalid='true']) > label:first-child,
+.form .form-field:focus-within > label:first-child,
+.form .form-field:has(input:valid) > label:first-child,
+.form .form-field:has(textarea:valid) > label:first-child {
+  opacity: 0;
 }
 
 .form .form-field.checkbox-field label input,
@@ -140,16 +366,7 @@
   }
 }
 
-/* custom toggle field */
-.form .form-field.toggle-field label {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 1ch;
-  min-height: 44px;
-}
-
+/* ---------- Custom toggle field ---------- */
 /* stylelint-disable-next-line no-descending-specificity */
 .form .form-field.toggle-field label input {
   width: 2em;
@@ -162,8 +379,8 @@
   width: calc(2em + (2 * 1px));
   height: calc(1em + (2 * 1px));
   border-radius: 1em;
-  border: 1px solid var(--dark-color);
-  background-color: var(--dark-color);
+  border: 1px solid #2e3850;
+  background-color: #2e3850;
   transition: background-color 0.2s;
   cursor: pointer;
 }
@@ -177,7 +394,7 @@
   width: 1em;
   height: 1em;
   border-radius: 50%;
-  background-color: var(--background-color);
+  background-color: var(--text-color);
   transition: left 0.2s;
 }
 
@@ -190,22 +407,22 @@
 }
 
 .form .form-field.toggle-field label input:disabled + span {
-  border-color: #d1d1d1;
-  background-color: #d1d1d1;
+  border-color: var(--dark-color);
+  background-color: var(--dark-color);
   cursor: default;
 }
 
 .form .form-field.toggle-field label input:disabled + span::after {
-  background-color: var(--light-color);
+  background-color: var(--muted-color);
 }
 
+/* ---------- Help text, errors, messages ---------- */
 .form .field-help-text {
   margin-top: 0.2em;
-  color: var(--dark-color);
+  color: var(--muted-color);
   font-size: var(--body-font-size-xs);
 }
 
-/* validation error state */
 .form input[aria-invalid='true'],
 .form textarea[aria-invalid='true'],
 .form select[aria-invalid='true'] {
@@ -215,7 +432,7 @@
 
 .form .field-error {
   margin-top: 0.3em;
-  color: firebrick;
+  color: #ff6b6b;
   font-size: var(--body-font-size-xs);
 }
 
@@ -225,13 +442,13 @@
 }
 
 .form .form-message.error {
-  color: firebrick;
+  color: #ff6b6b;
 }
 
-/* repeatable fieldset (e.g. Employment History) */
+/* ---------- Repeatable fieldset ---------- */
 .form fieldset.fieldset-field {
   border: 1px solid var(--dark-color);
-  border-radius: 4px;
+  border-radius: 12px;
   padding: 1em;
 }
 
@@ -258,7 +475,7 @@
 .form button.add-instance,
 .form button.remove-instance {
   appearance: none;
-  border-radius: 4px;
+  border-radius: 8px;
   padding: 0.5em 1em;
   font-size: var(--body-font-size-s);
   cursor: pointer;
@@ -267,7 +484,7 @@
 .form button.add-instance {
   margin-top: 1em;
   width: 100%;
-  border: 1px dashed var(--dark-color);
+  border: 1px dashed #2e3850;
   background-color: transparent;
   color: var(--link-color);
 }
@@ -281,7 +498,7 @@
   margin-top: 0.5em;
   border: 1px solid var(--dark-color);
   background-color: transparent;
-  color: firebrick;
+  color: #ff6b6b;
   font-size: var(--body-font-size-xs);
   padding: 0.25em 0.75em;
 }
@@ -291,27 +508,56 @@
   background-color: var(--light-color);
 }
 
+/* ---------- Buttons ---------- */
 .form .button-wrapper {
-  margin-top: 1em;
+  margin-top: 14px;
 }
 
 .form .button-wrapper button {
   width: 100%;
 }
 
+.form .button-wrapper button.button {
+  min-height: 56px;
+  border: 0;
+  border-radius: 12px;
+  padding: 18px 26px; /* px, because font-size is 0 below */
+  background: linear-gradient(90deg, #6366f1, #22d3ee);
+  color: var(--background-color);
+  font-size: 0; /* hides "Submit" */
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.form .button-wrapper button.button::before {
+  content: 'Send message';
+  font-size: 1rem;
+  line-height: 20px;
+}
+
+.form .button-wrapper button.button:hover {
+  filter: brightness(1.1);
+}
+
 .form .button-wrapper button.button:disabled,
 .form .button-wrapper button.button:hover:disabled {
-  border-color: var(--dark-color);
-  background-color: var(--dark-color);
-  color: var(--background-color);
+  background: #2a3246;
+  color: #6b7488;
+  filter: none;
   cursor: progress;
+}
+
+.form .button-wrapper button.button.secondary {
+  border: 1px solid var(--dark-color);
+  background: transparent;
+  color: var(--text-color);
 }
 
 .form .button-wrapper button.button.secondary:disabled,
 .form .button-wrapper button.button.secondary:hover:disabled {
   border-color: var(--dark-color);
-  background-color: var(--light-color);
-  color: var(--dark-color);
+  background: var(--light-color);
+  color: var(--muted-color);
 }
 
 @media (width >= 600px) {
