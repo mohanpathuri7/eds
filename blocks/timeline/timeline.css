@@ -1,0 +1,66 @@
+/* Timeline block */
+.timeline {
+  --timeline-accent: var(--color-accent, #22d3ee);
+  --timeline-primary: var(--color-primary, #6366f1);
+  --timeline-text: var(--text-color, #e6e8f2);
+  --timeline-muted: var(--color-muted, #9aa3b8);
+}
+
+.timeline > ol {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Vertical line + dot per role */
+.timeline > ol > li {
+  position: relative;
+  padding: 0 0 32px 24px;
+  border-left: 2px solid var(--timeline-primary);
+}
+
+.timeline > ol > li:last-child {
+  padding-bottom: 0;
+}
+
+.timeline > ol > li::before {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: -7px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--timeline-accent);
+}
+
+.timeline .timeline-date {
+  margin: 0 0 4px;
+  color: var(--timeline-accent);
+  font-size: var(--body-font-size-xs, 14px);
+}
+
+.timeline .timeline-body h3 {
+  margin: 0 0 8px;
+  color: var(--timeline-text);
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.timeline .timeline-body ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.timeline .timeline-body li {
+  margin-bottom: 6px;
+  color: var(--timeline-muted);
+  font-size: var(--body-font-size-xs, 14px);
+  line-height: 1.6;
+}
+
+@media (width >= 900px) {
+  .timeline > ol > li {
+    padding-left: 32px;
+  }
+}

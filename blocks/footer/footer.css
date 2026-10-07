@@ -30,9 +30,21 @@ footer .footer .default-content-wrapper p {
   font-size: inherit;
 }
 
-footer .footer a:any-link { color: #9aa3b2; text-decoration: none; }
-footer .footer a:hover { color: #e6e8ef; text-decoration: none; }
-footer .footer :focus-visible { outline: 2px solid #22d3ee; outline-offset: 3px; border-radius: 4px; }
+footer .footer a:any-link {
+  color: #9aa3b2;
+  text-decoration: none;
+}
+
+footer .footer a:hover {
+  color: #e6e8ef;
+  text-decoration: none;
+}
+
+footer .footer :focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 3px;
+  border-radius: 4px;
+}
 
 @media (width >= 600px) {
   footer .footer .default-content-wrapper {
