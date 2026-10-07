@@ -12,12 +12,12 @@
   margin-bottom: 24px;
 }
 
-.columns > div:last-child {
-  margin-bottom: 0;
-}
-
 .columns > div > div {
   width: 100%;
+}
+
+.columns > div:last-child {
+  margin-bottom: 0;
 }
 
 .columns p {

@@ -19,10 +19,6 @@
   border-left: 2px solid var(--timeline-primary);
 }
 
-.timeline > ol > li:last-child {
-  padding-bottom: 0;
-}
-
 .timeline > ol > li::before {
   content: '';
   position: absolute;
@@ -57,6 +53,10 @@
   color: var(--timeline-muted);
   font-size: var(--body-font-size-xs, 14px);
   line-height: 1.6;
+}
+
+.timeline > ol > li:last-child {
+  padding-bottom: 0;
 }
 
 @media (width >= 900px) {
