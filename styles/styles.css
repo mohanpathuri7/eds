@@ -136,6 +136,7 @@ html {
     background: var(--color-surface, #111729);
     border-block: 1px solid var(--color-border, #1e2540);
 }
+
 .error{
     width: 100%;
     display: flex;
