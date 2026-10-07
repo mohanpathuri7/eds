@@ -109,6 +109,46 @@ function toggleMenu(nav, navSections, forceExpanded = null) {
 }
 
 /**
+ * Marks the nav item that matches the current page as active.
+ * - "/" (Home) matches only the home page
+ * - Other links also match their sub-pages (/blog/ stays active on /blog/my-post)
+ * - Items without a link (e.g. <u>AI Lab</u>) are skipped
+ * @param {Element} navSections The .nav-sections element
+ */
+function setActiveNavItem(navSections) {
+  if (!navSections) return;
+
+  const clean = (path) => {
+    const p = path.replace(/\/index(\.html)?$/, '').replace(/\/+$/, '');
+    return p === '' ? '/' : p;
+  };
+  const current = clean(window.location.pathname);
+
+  let matched = null;
+  navSections.querySelectorAll(':scope .default-content-wrapper > ul > li').forEach((li) => {
+    li.classList.remove('active');
+    const link = li.querySelector('a');
+    if (!link) return;
+    link.removeAttribute('aria-current');
+
+    const target = clean(new URL(link.href, window.location.origin).pathname);
+    const isMatch = target === '/'
+      ? current === '/'
+      : current === target || current.startsWith(`${target}/`);
+
+    // Longest match wins
+    if (isMatch && (!matched || target.length > matched.target.length)) {
+      matched = { li, link, target };
+    }
+  });
+
+  if (matched) {
+    matched.li.classList.add('active');
+    matched.link.setAttribute('aria-current', 'page');
+  }
+}
+
+/**
  * loads and decorates the header, mainly the nav
  * @param {Element} block The header block element
  */
@@ -131,7 +171,7 @@ export default async function decorate(block) {
   });
 
   const navBrand = nav.querySelector('.nav-brand');
-  const brandLink = navBrand.querySelector('.button');
+  const brandLink = navBrand?.querySelector('.button');
   if (brandLink) {
     brandLink.className = '';
     brandLink.closest('.button-container').className = '';
@@ -150,6 +190,9 @@ export default async function decorate(block) {
       });
     });
   }
+
+  // highlight the menu item for the current page
+  setActiveNavItem(navSections);
 
   // hamburger for mobile
   const hamburger = document.createElement('div');
