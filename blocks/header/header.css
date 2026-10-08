@@ -118,7 +118,6 @@ header nav[aria-expanded='true'] .nav-sections {
 header nav .nav-sections ul {
   list-style: none;
   margin: 0;
-  padding: 0;
 }
 
 header nav .nav-sections li {
