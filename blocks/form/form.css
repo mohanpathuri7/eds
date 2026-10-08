@@ -92,7 +92,7 @@
 }
 
 .section.form-container .default-content-wrapper a {
-  color: inherit;
+  color: #22d3ee;
   text-decoration: none;
 }
 
@@ -522,8 +522,8 @@
   border: 0;
   border-radius: 12px;
   padding: 18px 26px; /* px, because font-size is 0 below */
-  background: linear-gradient(90deg, #6366f1, #22d3ee);
-  color: var(--background-color);
+  background: linear-gradient(80deg, #6366f1, #22d3ee);
+  color: var(--text-color);
   font-size: 0; /* hides "Submit" */
   font-weight: 700;
   cursor: pointer;
