@@ -223,7 +223,7 @@ header nav .search-wrapper .search-box {
   align-items: center;
   gap: 12px;
   padding: 0 16px;
-  height: 56px;
+  height: 45px;
   border: 1px solid var(--accent-2, #22d3ee);
   border-radius: 12px;
   background: var(--bg, #0b0f19);
@@ -243,7 +243,7 @@ header nav .search-wrapper .search-results {
   display: flex;
   flex-direction: column;
   gap: 0;
-  margin: 12px 0 0;
+  margin:0;
   padding: 0;
   list-style: none;
   max-height: 60vh;

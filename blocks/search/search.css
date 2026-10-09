@@ -68,11 +68,12 @@
 /* no results */
 .search ul.search-results.no-results {
   display: block;
-  margin-left: 34px;
+  margin-left: 0;
 }
 
 .search ul.search-results.no-results > li {
   border: none;
+  margin-top:1rem;
 }
 
 /* minimal variant */
