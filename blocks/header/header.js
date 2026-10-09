@@ -149,6 +149,150 @@ function setActiveNavItem(navSections) {
 }
 
 /**
+ * Makes the search results match the mock: result counter, type label
+ * (Experience, AI Lab, Blog ...) and an initials badge. Works on top of the
+ * existing search block, so search.js does not need to change.
+ * @param {Element} panel The .search-wrapper element
+ */
+function enhanceSearchPanel(panel) {
+  const TYPES = [
+    ['/experience', 'Experience', 'EX'],
+    ['/projects', 'Projects', 'PR'],
+    ['/ai-lab', 'AI Lab', 'AI'],
+    ['/blog', 'Blog', 'BL'],
+    ['/contact', 'Contact', 'CO'],
+  ];
+  const typeOf = (href) => {
+    let path = '/';
+    try { path = new URL(href, window.location.origin).pathname; } catch (e) { /* ignore */ }
+    return TYPES.find(([p]) => path === p || path.startsWith(`${p}/`)) || ['/', 'Home', 'HM'];
+  };
+
+  const run = () => {
+    const box = panel.querySelector('.search-box');
+    if (box && !box.querySelector('.search-esc')) {
+      const esc = document.createElement('span');
+      esc.className = 'search-esc';
+      esc.textContent = 'Esc';
+      box.append(esc);
+    }
+
+    const results = panel.querySelector('.search-results');
+    if (!results) return;
+
+    let count = results.previousElementSibling;
+    if (!count?.classList.contains('search-count')) {
+      count = document.createElement('div');
+      count.className = 'search-count';
+      count.setAttribute('aria-hidden', 'true');
+      results.before(count);
+    }
+
+    let total = 0;
+    results.querySelectorAll(':scope > li').forEach((li) => {
+      const link = li.querySelector('a[href]');
+      if (!link) return;
+      total += 1;
+      if (li.dataset.enhanced) return;
+      const [, label, initials] = typeOf(link.getAttribute('href'));
+      const badge = document.createElement('div');
+      badge.className = 'search-initials';
+      badge.setAttribute('aria-hidden', 'true');
+      const img = li.querySelector('img');
+      if (img) {
+        // show the result image inside the badge (instead of the initials)
+        badge.append(img);
+        img.addEventListener('error', () => {
+          img.remove();
+          badge.textContent = initials;
+        });
+      } else {
+        badge.textContent = initials;
+      }
+      const tag = document.createElement('span');
+      tag.className = 'search-tag';
+      tag.textContent = label;
+      li.prepend(badge);
+      li.append(tag);
+      li.dataset.enhanced = 'true';
+    });
+
+    const text = total ? `${total} result${total === 1 ? '' : 's'}` : '';
+    if (count.textContent !== text) count.textContent = text;
+  };
+
+  new MutationObserver(run).observe(panel, { childList: true, subtree: true });
+  run();
+}
+
+/**
+ * Adds a search icon button to the nav (desktop) that opens the search panel.
+ * On mobile the search input is shown inside the open hamburger menu.
+ * @param {Element} nav The nav element
+ * @param {Element} navSections The .nav-sections element
+ */
+function setupSearchToggle(nav, navSections) {
+  const panel = navSections?.querySelector('.search-wrapper');
+  const list = navSections?.querySelector('.default-content-wrapper > ul');
+  if (!panel || !list) return;
+  panel.id = 'nav-search-panel';
+  enhanceSearchPanel(panel);
+
+  const icon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+  const buttonHtml = `<button type="button" aria-label="Search" aria-expanded="false" aria-controls="nav-search-panel">${icon}</button>`;
+
+  // desktop: icon in the menu, before the last item (Resume)
+  const li = document.createElement('li');
+  li.className = 'nav-search-toggle';
+  li.innerHTML = buttonHtml;
+  list.insertBefore(li, list.lastElementChild);
+
+  // mobile: icon on the right of the header (hamburger | title | search)
+  let tools = nav.querySelector('.nav-tools');
+  if (!tools) {
+    tools = document.createElement('div');
+    tools.className = 'nav-tools';
+    nav.append(tools);
+  }
+  const mobile = document.createElement('div');
+  mobile.className = 'nav-search-mobile';
+  mobile.innerHTML = buttonHtml;
+  tools.append(mobile);
+
+  // the panel lives directly in the nav so it can open even when the menu is closed
+  nav.append(panel);
+
+  const buttons = [li.querySelector('button'), mobile.querySelector('button')];
+
+  const setOpen = (open) => {
+    nav.classList.toggle('search-open', open);
+    buttons.forEach((b) => b.setAttribute('aria-expanded', String(open)));
+    if (open) panel.querySelector('input')?.focus();
+  };
+
+  buttons.forEach((button) => {
+    button.addEventListener('click', (e) => {
+      e.stopPropagation();
+      setOpen(!nav.classList.contains('search-open'));
+    });
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'Escape' && nav.classList.contains('search-open')) {
+      setOpen(false);
+      const visible = buttons.find((b) => b.offsetParent !== null) || buttons[0];
+      visible.focus();
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (!panel.contains(e.target) && !li.contains(e.target) && !mobile.contains(e.target)) {
+      setOpen(false);
+    }
+  });
+}
+
+/**
  * loads and decorates the header, mainly the nav
  * @param {Element} block The header block element
  */
@@ -193,6 +337,9 @@ export default async function decorate(block) {
 
   // highlight the menu item for the current page
   setActiveNavItem(navSections);
+
+  // search icon + dropdown panel
+  setupSearchToggle(nav, navSections);
 
   // hamburger for mobile
   const hamburger = document.createElement('div');
