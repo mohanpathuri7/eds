@@ -391,7 +391,7 @@ header nav .search-wrapper .search-results mark {
   header nav .nav-sections .default-content-wrapper > ul {
     display: flex;
     justify-content: flex-end;
-    gap: 28px;
+    gap: 25px;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li {
