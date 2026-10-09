@@ -41,6 +41,9 @@
     margin-top: 58px;
     padding: 0;
   }
+  .form-container .form-wrapper .form {
+    padding: 26px;
+  }
 }
 
 /* ---------- Left column ---------- */
@@ -128,14 +131,15 @@
 
 /* ---------- Form card ---------- */
 .form-container .form-wrapper {
-  width: inherit;
+  width: 100%;
   margin: 0;
+  padding: 0;
 }
 
 .form-wrapper .form {
   border: 1px solid var(--dark-color);
   border-radius: 16px;
-  padding: 26px;
+  padding: 1.1rem;
   background-color: var(--light-color);
 }
 
