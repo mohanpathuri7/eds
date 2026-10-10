@@ -1,12 +1,27 @@
 {
-    "project": "Sidekick",
-    "plugins": [
-        {
-            "id": "library",
-            "title": "Block Library",
-            "environments": ["edit"],
-            "url": "/tools/sidekick/library.html",
-            "includePaths": ["**.docx**"]
-        }
-    ]
+  "project": "My Project",
+  "plugins": [
+    {
+      "id": "library",
+      "title": "Library",
+      "environments": ["edit"],
+      "isPalette": true,
+      "passConfig": true,
+      "paletteRect": "top: auto; bottom: 20px; left: 20px; height: 398px; width: calc(100vw - 40px);",
+      "url": "/tools/sidekick/library.html",
+      "includePaths": ["**.docx**"]
+    },
+    {
+      "id": "check-seo",
+      "title": "Check SEO",
+      "environments": ["dev", "preview", "live"],
+      "event": "check-seo"
+    },
+    {
+      "id": "open-sheet",
+      "title": "Open Redirects",
+      "environments": ["dev", "preview", "live"],
+      "url": "https://www.example.com/tools/redirects"
+    }
+  ]
 }
