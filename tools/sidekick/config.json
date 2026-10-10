@@ -7,7 +7,7 @@
       "environments": ["edit"],
       "isPalette": true,
       "passConfig": true,
-      "paletteRect": "top: auto; bottom: 20px; left: 20px; height: 398px; width: calc(100vw - 40px);",
+      "paletteRect": "top: 50px; bottom: 10px; left: auto; right: 10px; width: 400px; height: calc(100vw - 60px);",
       "url": "/tools/sidekick/library.html",
       "includePaths": ["**.docx**"]
     },
