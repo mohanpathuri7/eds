@@ -3,25 +3,10 @@
   "plugins": [
     {
       "id": "library",
-      "title": "Library",
+      "title": "Block Library",
       "environments": ["edit"],
-      "isPalette": true,
-      "passConfig": true,
-      "paletteRect": "top: 50px; bottom: 10px; left: auto; right: 10px; width: 400px; height: calc(100vw - 60px);",
       "url": "/tools/sidekick/library.html",
       "includePaths": ["**.docx**"]
-    },
-    {
-      "id": "check-seo",
-      "title": "Check SEO",
-      "environments": ["dev", "preview", "live"],
-      "event": "check-seo"
-    },
-    {
-      "id": "open-sheet",
-      "title": "Open Redirects",
-      "environments": ["dev", "preview", "live"],
-      "url": "https://www.example.com/tools/redirects"
     }
   ]
 }
