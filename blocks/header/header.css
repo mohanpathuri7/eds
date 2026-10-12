@@ -316,7 +316,7 @@ header nav .search-wrapper .search-esc {
 }
 
 header nav .search-wrapper .search-count {
-  margin: 16px 4px 0;
+  margin: 0 4px 16px;
   color: var(--text-muted, #9aa3b2);
   font-size: 14px;
   letter-spacing: 0.08em;
@@ -460,6 +460,7 @@ header nav .search-wrapper .search-results mark {
     align-items: center;
     width: 150px;
     padding: 0;
+    margin-right: -16px
   }
 
   header nav .nav-search-box {
