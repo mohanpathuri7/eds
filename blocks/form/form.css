@@ -515,10 +515,10 @@
 }
 
 .form .button-wrapper button.button {
-  min-height: 56px;
+  min-height: 50px;
   border: 0;
   border-radius: 999px;
-  padding: 18px 26px; /* px, because font-size is 0 below */
+  padding: 10px 22px; /* px, because font-size is 0 below */
   background: linear-gradient(80deg, #6366f1, #22d3ee);
   color: #fff;
   font-size: 0; /* hides "Submit" */

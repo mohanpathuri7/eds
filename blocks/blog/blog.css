@@ -307,7 +307,6 @@
 
 .blog .blog-article p {
   margin: 0 0 16px;
-  color: #cdd2e3;
   font-size: var(--body-font-size-s, 16px);
   line-height: 1.75;
 }
