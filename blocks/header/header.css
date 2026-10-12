@@ -166,6 +166,17 @@ header nav .nav-tools button {
   cursor: pointer;
 }
 
+header nav .nav-tools .nav-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 8px;
+}
+
+header nav .nav-tools .nav-theme-toggle svg {
+  display: block;
+}
+
 header nav :focus-visible {
   outline: 2px solid var(--accent-2, #22d3ee);
   outline-offset: 3px;
@@ -325,7 +336,7 @@ header nav .search-wrapper .search-results .search-tag {
   padding: 4px 12px;
   border: 1px solid var(--border-strong, rgb(255 255 255 / 25%));
   border-radius: 999px;
-  color: #a5b4fc;
+  color: var(--accent-2, #22d3ee);
   font-size: 14px;
   white-space: nowrap;
 }

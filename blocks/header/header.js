@@ -292,6 +292,43 @@ function setupSearchToggle(nav, navSections) {
   });
 }
 
+function setupThemeToggle(nav) {
+  let tools = nav.querySelector('.nav-tools');
+  if (!tools) {
+    tools = document.createElement('div');
+    tools.className = 'nav-tools';
+    nav.append(tools);
+  }
+
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'nav-theme-toggle';
+  tools.append(button);
+
+  const update = (isDark) => {
+    button.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} theme`);
+    button.setAttribute('aria-pressed', String(isDark));
+    button.innerHTML = isDark
+      ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>'
+      : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13z"/></svg>';
+  };
+
+  update(document.documentElement.dataset.theme === 'dark');
+  button.addEventListener('click', () => {
+    const isDark = document.documentElement.dataset.theme !== 'dark';
+    if (isDark) document.documentElement.dataset.theme = 'dark';
+    else delete document.documentElement.dataset.theme;
+    update(isDark);
+    try {
+      window.localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    } catch (error) {
+      // The current-page theme still changes when storage is unavailable.
+      // eslint-disable-next-line no-console
+      console.error('Unable to save theme preference.', error);
+    }
+  });
+}
+
 /**
  * loads and decorates the header, mainly the nav
  * @param {Element} block The header block element
@@ -340,6 +377,7 @@ export default async function decorate(block) {
 
   // search icon + dropdown panel
   setupSearchToggle(nav, navSections);
+  setupThemeToggle(nav);
 
   // hamburger for mobile
   const hamburger = document.createElement('div');

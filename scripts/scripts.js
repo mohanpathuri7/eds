@@ -12,6 +12,16 @@ import {
   buildBlock,
 } from './aem.js';
 
+try {
+  if (window.localStorage.getItem('theme') === 'dark') {
+    document.documentElement.dataset.theme = 'dark';
+  }
+} catch (error) {
+  // The light theme remains available when storage is unavailable.
+  // eslint-disable-next-line no-console
+  console.error('Unable to load theme preference.', error);
+}
+
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerTT = window.trustedTypes.createPolicy('tt-inner', {
     createHTML: (s) => s, // avoid stack overflow

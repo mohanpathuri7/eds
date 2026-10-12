@@ -1,13 +1,13 @@
-/* footer: exact colors from the portfolio mock (hard-coded, no variable dependency) */
+/* Footer */
 footer,
 footer .footer {
-  background: #0b0f19;
+  background: var(--color-bg);
   border: 0;
-  color: #9aa3b2;
+  color: var(--color-muted);
   font-family: var(--body-font-family, Inter, 'Helvetica Neue', Arial, sans-serif);
   font-size: 1rem;
   line-height: 1.55;
-  border-top: 1px solid var(--border, rgb(255 255 255 / 8%));
+  border-top: 1px solid var(--color-border);
 }
 
 footer .footer > div {
@@ -27,22 +27,22 @@ footer .footer .default-content-wrapper {
 
 footer .footer .default-content-wrapper p {
   margin: 0;
-  color: #9aa3b2;
+  color: var(--color-muted);
   font-size: inherit;
 }
 
 footer .footer a:any-link {
-  color: #9aa3b2;
+  color: var(--color-muted);
   text-decoration: none;
 }
 
 footer .footer a:hover {
-  color: #e6e8ef;
+  color: var(--color-text);
   text-decoration: none;
 }
 
 footer .footer :focus-visible {
-  outline: 2px solid #22d3ee;
+  outline: 2px solid var(--color-accent);
   outline-offset: 3px;
   border-radius: 4px;
 }
