@@ -1,5 +1,5 @@
-/* Certificates block */
-.certificates {
+/* Badges block */
+.badges {
   --cert-bg: var(--color-card, #0d1120);
   --cert-border: var(--color-border, #1e2540);
   --cert-text: var(--text-color, #e6e8f2);
@@ -10,7 +10,7 @@
 }
 
 /* Filter bar */
-.certificates .certificates-filters {
+.badges .badges-filters {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -18,7 +18,7 @@
   margin-bottom: 28px;
 }
 
-.certificates .certificates-filters button {
+.badges .badges-filters button {
   margin: 0;
   padding: 9px 18px;
   border: 1px solid #262c44;
@@ -29,30 +29,30 @@
   cursor: pointer;
 }
 
-.certificates .certificates-filters button:hover {
+.badges .badges-filters button:hover {
   color: var(--cert-text);
 }
 
-.certificates .certificates-filters button[aria-pressed='true'] {
+.badges .badges-filters button[aria-pressed='true'] {
   border-color: transparent;
   background: linear-gradient(135deg, var(--cert-primary), var(--cert-accent));
   color: #fff;
   font-weight: 700;
 }
 
-.certificates .certificates-filters button:focus-visible {
+.badges .badges-filters button:focus-visible {
   outline: 2px solid var(--cert-accent);
   outline-offset: 2px;
 }
 
-.certificates .certificates-count {
+.badges .badges-count {
   margin-left: auto;
   color: var(--cert-muted);
   font-size: var(--body-font-size-xs, 14px);
 }
 
 /* Grid */
-.certificates .certificates-grid {
+.badges .badges-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr));
   gap: 20px;
@@ -61,7 +61,7 @@
   list-style: none;
 }
 
-.certificates .certificates-card {
+.badges .badges-card {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -71,12 +71,12 @@
   background: var(--cert-bg);
 }
 
-.certificates .certificates-card[hidden] {
+.badges .badges-card[hidden] {
   display: none;
 }
 
 /* Thumbnail: the whole certificate is shown, never cropped */
-.certificates .certificates-thumb {
+.badges .badges-thumb {
   position: relative;
   overflow: hidden;
   aspect-ratio: 7 / 5;
@@ -85,7 +85,7 @@
   background: #fff;
 }
 
-.certificates .certificates-zoom {
+.badges .badges-zoom {
   display: block;
   width: 100%;
   height: 100%;
@@ -96,23 +96,23 @@
   cursor: zoom-in;
 }
 
-.certificates .certificates-zoom:focus-visible {
+.badges .badges-zoom:focus-visible {
   outline: 2px solid var(--cert-accent);
   outline-offset: -2px;
 }
 
-.certificates .certificates-thumb picture,
-.certificates .certificates-thumb img {
+.badges .badges-thumb picture,
+.badges .badges-thumb img {
   display: block;
   width: 100%;
   height: 100%;
 }
 
-.certificates .certificates-thumb img {
+.badges .badges-thumb img {
   object-fit: contain;
 }
 
-.certificates .certificates-category {
+.badges .badges-category {
   position: absolute;
   top: 10px;
   left: 10px;
@@ -126,7 +126,7 @@
 }
 
 /* Full-size viewer */
-.certificates .certificates-dialog {
+.badges .badges-dialog {
   width: min(96vw, 1400px);
   max-height: 94vh;
   padding: 0;
@@ -136,12 +136,12 @@
   overflow: hidden;
 }
 
-.certificates .certificates-dialog::backdrop {
+.badges .badges-dialog::backdrop {
   background: rgb(5 7 15 / 85%);
 }
 
-.certificates .certificates-dialog-body picture,
-.certificates .certificates-dialog-body img {
+.badges .badges-dialog-body picture,
+.badges .badges-dialog-body img {
   display: block;
   width: 100%;
   height: auto;
@@ -149,7 +149,7 @@
   object-fit: contain;
 }
 
-.certificates .certificates-close {
+.badges .badges-close {
   position: absolute;
   top: 10px;
   right: 10px;
@@ -168,35 +168,35 @@
 }
 
 /* Body */
-.certificates .certificates-body {
+.badges .badges-body {
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: 8px;
 }
 
-.certificates .certificates-body p {
+.badges .badges-body p {
   margin: 0;
 }
 
-.certificates .certificates-meta {
+.badges .badges-meta {
   color: var(--cert-accent);
   font-size: 13px;
 }
 
-.certificates .certificates-body h3 {
+.badges .badges-body h3 {
   margin: 0;
   color: var(--cert-text);
   font-size: 1.1875rem;
   line-height: 1.3;
 }
 
-.certificates .certificates-issuer {
+.badges .badges-issuer {
   color: var(--cert-muted);
   font-size: var(--body-font-size-xs, 14px);
 }
 
-.certificates .certificates-tags {
+.badges .badges-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
@@ -205,7 +205,7 @@
   list-style: none;
 }
 
-.certificates .certificates-tags li {
+.badges .badges-tags li {
   margin: 0;
   padding: 4px 12px;
   border-radius: 999px;
@@ -214,24 +214,24 @@
   font-size: 12px;
 }
 
-.certificates .certificates-link,
-.certificates .certificates-note {
+.badges .badges-link,
+.badges .badges-note {
   margin-top: auto;
   padding-top: 6px;
   font-size: var(--body-font-size-xs, 14px);
 }
 
-.certificates .certificates-link a {
+.badges .badges-link a {
   color: var(--cert-accent);
   font-weight: 700;
   text-decoration: none;
 }
 
-.certificates .certificates-link a::after {
+.badges .badges-link a::after {
   content: ' →';
 }
 
-.certificates .certificates-note {
+.badges .badges-note {
   color: var(--cert-muted);
   font-size: 13px;
 }

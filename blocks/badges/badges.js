@@ -1,8 +1,8 @@
 import { createOptimizedPicture } from '../../scripts/aem.js';
 
 /**
- * Certificates block — Google Docs format:
- * Table "Certificates", one row per certificate, 3 cells:
+ * Badges block — Google Docs format:
+ * Table "Badges", one row per certificate, 3 cells:
  *   [image | details | category]
  * details cell, top to bottom:
  *   bold title / issuer / date and length / bullet list (skills) / link or note
@@ -14,23 +14,23 @@ const isTitle = (p) => p.children.length === 1
 
 function createDialog() {
   const dialog = document.createElement('dialog');
-  dialog.className = 'certificates-dialog';
+  dialog.className = 'badges-dialog';
   dialog.setAttribute('aria-label', 'Certificate');
-  dialog.innerHTML = `<button type="button" class="certificates-close" aria-label="Close">×</button>
-    <div class="certificates-dialog-body"></div>`;
+  dialog.innerHTML = `<button type="button" class="badges-close" aria-label="Close">×</button>
+    <div class="badges-dialog-body"></div>`;
   // Click on the backdrop or the close button closes it
   dialog.addEventListener('click', (e) => {
-    if (e.target === dialog || e.target.closest('.certificates-close')) dialog.close();
+    if (e.target === dialog || e.target.closest('.badges-close')) dialog.close();
   });
   return dialog;
 }
 
 export default function decorate(block) {
   const list = document.createElement('ul');
-  list.className = 'certificates-grid';
+  list.className = 'badges-grid';
   const categories = [];
   const dialog = createDialog();
-  const dialogBody = dialog.querySelector('.certificates-dialog-body');
+  const dialogBody = dialog.querySelector('.badges-dialog-body');
 
   [...block.children].forEach((row) => {
     const [imageCell, detailsCell, categoryCell] = row.children;
@@ -38,7 +38,7 @@ export default function decorate(block) {
     if (category && !categories.includes(category)) categories.push(category);
 
     const li = document.createElement('li');
-    li.className = 'certificates-card';
+    li.className = 'badges-card';
     li.dataset.category = category;
 
     // Details
@@ -49,12 +49,12 @@ export default function decorate(block) {
 
     // Thumbnail (full certificate, never cropped) + category badge
     const thumb = document.createElement('div');
-    thumb.className = 'certificates-thumb';
+    thumb.className = 'badges-thumb';
     const img = imageCell?.querySelector('img');
     if (img) {
       const zoom = document.createElement('button');
       zoom.type = 'button';
-      zoom.className = 'certificates-zoom';
+      zoom.className = 'badges-zoom';
       zoom.setAttribute('aria-label', `View full certificate: ${title}`);
       zoom.append(createOptimizedPicture(img.src, img.alt || title, false, [
         { media: '(min-width: 600px)', width: '1000' },
@@ -70,22 +70,22 @@ export default function decorate(block) {
     }
     if (category) {
       const badge = document.createElement('span');
-      badge.className = 'certificates-category';
+      badge.className = 'badges-category';
       badge.textContent = category;
       thumb.append(badge);
     }
 
     const body = document.createElement('div');
-    body.className = 'certificates-body';
-    if (metaP) { metaP.className = 'certificates-meta'; body.append(metaP); }
+    body.className = 'badges-body';
+    if (metaP) { metaP.className = 'badges-meta'; body.append(metaP); }
     const h3 = document.createElement('h3');
     h3.textContent = title;
     body.append(h3);
-    if (issuerP) { issuerP.className = 'certificates-issuer'; body.append(issuerP); }
+    if (issuerP) { issuerP.className = 'badges-issuer'; body.append(issuerP); }
     const tags = detailsCell?.querySelector('ul');
-    if (tags) { tags.className = 'certificates-tags'; body.append(tags); }
+    if (tags) { tags.className = 'badges-tags'; body.append(tags); }
     if (footP) {
-      footP.className = footP.querySelector('a') ? 'certificates-link' : 'certificates-note';
+      footP.className = footP.querySelector('a') ? 'badges-link' : 'badges-note';
       body.append(footP);
     }
 
@@ -95,18 +95,18 @@ export default function decorate(block) {
 
   // Filter bar + count
   const bar = document.createElement('div');
-  bar.className = 'certificates-filters';
+  bar.className = 'badges-filters';
   const count = document.createElement('span');
-  count.className = 'certificates-count';
+  count.className = 'badges-count';
 
   const update = (selected) => {
     let visible = 0;
-    list.querySelectorAll('.certificates-card').forEach((card) => {
+    list.querySelectorAll('.badges-card').forEach((card) => {
       const show = selected === 'All' || card.dataset.category === selected;
       card.hidden = !show;
       if (show) visible += 1;
     });
-    count.textContent = `${visible} certificate${visible === 1 ? '' : 's'}`;
+    count.textContent = `${visible} badge${visible === 1 ? '' : 's'}`;
     bar.querySelectorAll('button').forEach((b) => {
       b.setAttribute('aria-pressed', b.textContent === selected ? 'true' : 'false');
     });
