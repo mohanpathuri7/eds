@@ -235,3 +235,13 @@
   color: var(--cert-muted);
   font-size: 13px;
 }
+
+/* Medal on the top-right of the image */
+.badges .badges-medal {
+  position: absolute;
+  top: 0;
+  right: 12px;
+  line-height: 0;
+  filter: drop-shadow(0 3px 4px rgb(0 0 0 / 40%));
+  pointer-events: none;
+}

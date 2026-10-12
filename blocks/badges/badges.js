@@ -2,8 +2,8 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 
 /**
  * Badges block — Google Docs format:
- * Table "Badges", one row per certificate, 3 cells:
- *   [image | details | category]
+ * Table "Badges", one row per certificate, 4 cells:
+ *   [image | details | category | medal (Gold, Silver or Bronze)]
  * details cell, top to bottom:
  *   bold title / issuer / date and length / bullet list (skills) / link or note
  * Clicking a thumbnail opens the full-size certificate.
@@ -11,6 +11,27 @@ import { createOptimizedPicture } from '../../scripts/aem.js';
 const isTitle = (p) => p.children.length === 1
   && p.firstElementChild.tagName === 'STRONG'
   && p.textContent.trim() === p.firstElementChild.textContent.trim();
+
+// Medal colours: [main, dark, light]
+const MEDALS = {
+  gold: ['#f7d046', '#b8860b', '#fff3b0'],
+  silver: ['#dfe4ee', '#7d8799', '#ffffff'],
+  bronze: ['#d98f55', '#7a4a22', '#f3c9a0'],
+};
+
+function createMedal(level) {
+  const colors = MEDALS[level];
+  if (!colors) return null;
+  const [main, dark, light] = colors;
+  const medal = document.createElement('span');
+  medal.className = 'badges-medal';
+  medal.innerHTML = `<svg width="44" height="58" viewBox="0 0 44 58" role="img" aria-label="${level} badge">
+    <path d="M10 0h11l6 22H16z" fill="#6366f1"/><path d="M34 0H23l-6 22h11z" fill="#4f46e5"/>
+    <circle cx="22" cy="36" r="16" fill="${main}" stroke="${dark}" stroke-width="2.5"/>
+    <circle cx="22" cy="36" r="10.5" fill="none" stroke="${light}" stroke-width="1.5"/>
+    <path d="M22 29.5l2.2 4.5 5 .7-3.6 3.5.9 5-4.5-2.4-4.5 2.4.9-5-3.6-3.5 5-.7z" fill="${dark}"/></svg>`;
+  return medal;
+}
 
 function createDialog() {
   const dialog = document.createElement('dialog');
@@ -33,7 +54,7 @@ export default function decorate(block) {
   const dialogBody = dialog.querySelector('.badges-dialog-body');
 
   [...block.children].forEach((row) => {
-    const [imageCell, detailsCell, categoryCell] = row.children;
+    const [imageCell, detailsCell, categoryCell, medalCell] = row.children;
     const category = categoryCell?.textContent.trim() || '';
     if (category && !categories.includes(category)) categories.push(category);
 
@@ -74,6 +95,8 @@ export default function decorate(block) {
       badge.textContent = category;
       thumb.append(badge);
     }
+    const medal = createMedal(medalCell?.textContent.trim().toLowerCase());
+    if (medal) thumb.append(medal);
 
     const body = document.createElement('div');
     body.className = 'badges-body';
