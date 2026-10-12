@@ -226,8 +226,7 @@ function enhanceSearchPanel(panel) {
 }
 
 /**
- * Adds a search icon button to the nav (desktop) that opens the search panel.
- * On mobile the search input is shown inside the open hamburger menu.
+ * Places search in the desktop nav and keeps the search button on mobile.
  * @param {Element} nav The nav element
  * @param {Element} navSections The .nav-sections element
  */
@@ -238,16 +237,21 @@ function setupSearchToggle(nav, navSections) {
   panel.id = 'nav-search-panel';
   enhanceSearchPanel(panel);
 
-  const icon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
-  const buttonHtml = `<button type="button" aria-label="Search" aria-expanded="false" aria-controls="nav-search-panel">${icon}</button>`;
+  const input = panel.querySelector('.search-input');
+  const searchBox = panel.querySelector('.search-box');
+  if (!input || !searchBox) return;
 
-  // desktop: icon in the menu, before the last item (Resume)
   const li = document.createElement('li');
   li.className = 'nav-search-toggle';
-  li.innerHTML = buttonHtml;
+  const inlineSearch = document.createElement('div');
+  inlineSearch.className = 'nav-search-box';
+  inlineSearch.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>';
+  inlineSearch.append(input);
+  li.append(inlineSearch);
   list.insertBefore(li, list.lastElementChild);
+  searchBox.remove();
 
-  // mobile: icon on the right of the header (hamburger | title | search)
+  // Mobile keeps a search button beside the theme control.
   let tools = nav.querySelector('.nav-tools');
   if (!tools) {
     tools = document.createElement('div');
@@ -256,32 +260,30 @@ function setupSearchToggle(nav, navSections) {
   }
   const mobile = document.createElement('div');
   mobile.className = 'nav-search-mobile';
-  mobile.innerHTML = buttonHtml;
+  const icon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
+  mobile.innerHTML = `<button type="button" aria-label="Search" aria-controls="nav-search-panel">${icon}</button>`;
   tools.append(mobile);
 
-  // the panel lives directly in the nav so it can open even when the menu is closed
+  // Keep results directly in the nav so the panel can overlay the page.
   nav.append(panel);
-
-  const buttons = [li.querySelector('button'), mobile.querySelector('button')];
 
   const setOpen = (open) => {
     nav.classList.toggle('search-open', open);
-    buttons.forEach((b) => b.setAttribute('aria-expanded', String(open)));
-    if (open) panel.querySelector('input')?.focus();
   };
 
-  buttons.forEach((button) => {
-    button.addEventListener('click', (e) => {
-      e.stopPropagation();
-      setOpen(!nav.classList.contains('search-open'));
-    });
+  input.addEventListener('focus', () => setOpen(input.value.length >= 3));
+  input.addEventListener('input', () => setOpen(input.value.length >= 3));
+
+  mobile.querySelector('button').addEventListener('click', () => {
+    if (!isDesktop.matches && nav.getAttribute('aria-expanded') !== 'true') {
+      toggleMenu(nav, navSections);
+    }
+    input.focus();
   });
 
   document.addEventListener('keydown', (e) => {
     if (e.code === 'Escape' && nav.classList.contains('search-open')) {
       setOpen(false);
-      const visible = buttons.find((b) => b.offsetParent !== null) || buttons[0];
-      visible.focus();
     }
   });
 

@@ -143,11 +143,12 @@ header nav .nav-sections .default-content-wrapper > ul > li:last-child a,
 header nav .nav-sections .default-content-wrapper > ul > li:last-child u {
   display: inline-block;
   padding: 10px 20px;
-  border: 1px solid var(--border-strong, rgb(255 255 255 / 25%));
-  border-radius: 12px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(110deg, var(--color-primary, #6366f1), var(--color-accent, #22d3ee));
   font-size: 16px;
   font-weight: 700;
-  color: var(--accent-2, #22d3ee);
+  color: #fff;
 }
 
 /* tools (theme toggle goes here) */
@@ -158,7 +159,8 @@ header nav .nav-tools {
 }
 
 header nav .nav-tools button {
-  width: 40px; height: 40px;
+  width: 48px;
+  height: 48px;
   border: 1px solid var(--border, rgb(255 255 255 / 8%));
   border-radius: 50%;
   background: none;
@@ -183,8 +185,47 @@ header nav :focus-visible {
   border-radius: 4px;
 }
 
-/* search: icon is hidden on mobile (the input shows inside the open menu) */
+/* Search input */
 header nav .nav-sections .default-content-wrapper > ul > li.nav-search-toggle { display: none; }
+
+header nav[aria-expanded='true'] .nav-sections .default-content-wrapper > ul > li.nav-search-toggle {
+  display: block;
+}
+
+header nav .nav-search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border: 1px solid var(--border, rgb(255 255 255 / 8%));
+  border-radius: 999px;
+  background: var(--bg-panel, #0d1426);
+  color: var(--text-muted, #9aa3b2);
+}
+
+header nav .nav-search-box:focus-within {
+  border-color: var(--accent-2, #22d3ee);
+}
+
+header nav .nav-search-box .search-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--text, #e6e8ef);
+  font: inherit;
+  font-size: 13px;
+}
+
+header nav .nav-search-box .search-input::placeholder {
+  color: var(--text-muted, #9aa3b2);
+  opacity: 1;
+}
 
 /* search panel content */
 header nav .search-wrapper {
@@ -209,7 +250,7 @@ header nav.search-open .search-wrapper {
   z-index: 20;
 }
 
-/* mobile search icon (right side of the header) */
+/* Mobile search icon (right side of the header) */
 header nav .nav-search-mobile button {
   width: 40px;
   height: 40px;
@@ -227,27 +268,6 @@ header nav.search-open .nav-search-mobile button {
   border-color: var(--accent-2, #22d3ee);
   background: rgb(34 211 238 / 12%);
   color: var(--accent-2, #22d3ee);
-}
-
-header nav .search-wrapper .search-box {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 16px;
-  height: 45px;
-  border: 1px solid var(--accent-2, #22d3ee);
-  border-radius: 12px;
-  background: var(--bg, #0b0f19);
-}
-
-header nav .search-wrapper .search-input {
-  flex: 1;
-  min-width: 0;
-  border: 0;
-  outline: 0;
-  background: transparent;
-  color: var(--text, #e6e8ef);
-  font-size: 18px;
 }
 
 header nav .search-wrapper .search-results {
@@ -420,40 +440,32 @@ header nav .search-wrapper .search-results mark {
     background: var(--accent, #6366f1);
   }
 
-  header nav .nav-sections .default-content-wrapper > ul > li:last-child { padding-top: 0; }
+  header nav .nav-sections .default-content-wrapper > ul > li:last-child {
+    display: flex;
+    align-items: center;
+    padding: 0;
+  }
 
   header nav .nav-sections .default-content-wrapper > ul > li:last-child a,
   header nav .nav-sections .default-content-wrapper > ul > li:last-child u {
-    padding: 8px 16px;
-    margin-top: -8px;
+    padding: 11px 20px;
+    line-height: 24px;
   }
+
   header nav .nav-sections .default-content-wrapper > ul > li:last-child::after { display: none; }
 
-  /* search icon button */
-  header nav .nav-sections .default-content-wrapper > ul > li.nav-search-toggle {
-    display: block;
-    align-self: center;
-    padding: 0;
-    margin-top: -8px; /* same offset as the Resume button */
-  }
-
-  header nav .nav-search-toggle button {
-    width: 44px;
-    height: 44px;
+  /* Inline search field before Resume */
+  header nav[aria-expanded='true'] .nav-sections .default-content-wrapper > ul > li.nav-search-toggle {
     display: flex;
     align-items: center;
-    justify-content: center;
-    border: 1px solid var(--border-strong, rgb(255 255 255 / 25%));
-    border-radius: 12px;
-    background: none;
-    color: var(--text-muted, #9aa3b2);
-    cursor: pointer;
+    width: 150px;
+    padding: 0;
   }
 
-  header nav.search-open .nav-search-toggle button {
-    border-color: var(--accent-2, #22d3ee);
-    background: rgb(34 211 238 / 12%);
-    color: var(--accent-2, #22d3ee);
+  header nav .nav-search-box {
+    height: 40px;
+    padding: 0 10px;
+    background: var(--color-card, #0d1120);
   }
 
   /* desktop: the icon in the menu is used, the panel opens on the right */
