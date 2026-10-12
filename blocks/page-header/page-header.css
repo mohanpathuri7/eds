@@ -1,0 +1,7 @@
+/* Page header */
+.page-header .page-header-title {
+  margin: 0 0 16px;
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  letter-spacing: -0.03em;
+}
+

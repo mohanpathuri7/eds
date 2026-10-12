@@ -73,16 +73,10 @@
 
 .section.form-container .default-content-wrapper p {
   margin: 0;
-  color: var(--muted-color);
 }
 
 /* the two intro <p> tags flow as one paragraph */
-.section.form-container .default-content-wrapper p:nth-of-type(1),
-.section.form-container .default-content-wrapper p:nth-of-type(2) {
-  display: inline;
-  font-size: 1.125rem;
-  line-height: 33px;
-}
+
 
 .section.form-container .default-content-wrapper p:nth-of-type(1)::after {
   content: ' ';
@@ -91,8 +85,6 @@
 /* email / LinkedIn lines */
 .section.form-container .default-content-wrapper p:nth-of-type(3) {
   margin: 22px 0 24px;
-  font-size: 1rem;
-  line-height: 28px;
 }
 
 .section.form-container .default-content-wrapper a {
@@ -119,7 +111,7 @@
 .section.form-container .default-content-wrapper p:last-child a {
   display: inline-block;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: 999px;
   padding: 18px 26px;
   color: var(--color-text);
   font-weight: 600;
@@ -525,10 +517,10 @@
 .form .button-wrapper button.button {
   min-height: 56px;
   border: 0;
-  border-radius: 12px;
+  border-radius: 999px;
   padding: 18px 26px; /* px, because font-size is 0 below */
   background: linear-gradient(80deg, #6366f1, #22d3ee);
-  color: var(--text-color);
+  color: #fff;
   font-size: 0; /* hides "Submit" */
   font-weight: 700;
   cursor: pointer;

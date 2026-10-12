@@ -423,7 +423,7 @@ header nav .search-wrapper .search-results mark {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 12px;
+    gap: 15px;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li {
@@ -433,12 +433,6 @@ header nav .search-wrapper .search-results mark {
     font-size: 16px;
     border: 0;
     position: relative;
-  }
-
-  header nav .nav-sections .default-content-wrapper > ul > li:nth-last-child(3) {
-    margin-right: 8px;
-    padding-right: 20px;
-    border-right: 1px solid var(--border, rgb(255 255 255 / 8%));
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li.active::after {
@@ -474,7 +468,10 @@ header nav .search-wrapper .search-results mark {
     display: flex;
     align-items: center;
     width: 166px;
-    padding: 0;
+    padding: 0 0 0 15px;
+    margin-right: -7px;
+    margin-left: 2px;
+    border-left: 1px solid var(--border, rgb(255 255 255 / 8%));
   }
 
   header nav .nav-search-box {
