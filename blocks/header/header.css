@@ -421,15 +421,24 @@ header nav .search-wrapper .search-results mark {
 
   header nav .nav-sections .default-content-wrapper > ul {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
-    gap: 25px;
+    gap: 12px;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li {
-    padding: 4px 0;
+    display: flex;
+    align-items: center;
+    padding: 0;
     font-size: 16px;
     border: 0;
     position: relative;
+  }
+
+  header nav .nav-sections .default-content-wrapper > ul > li:nth-last-child(3) {
+    margin-right: 8px;
+    padding-right: 20px;
+    border-right: 1px solid var(--border, rgb(255 255 255 / 8%));
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li.active::after {
@@ -448,8 +457,14 @@ header nav .search-wrapper .search-results mark {
 
   header nav .nav-sections .default-content-wrapper > ul > li:last-child a,
   header nav .nav-sections .default-content-wrapper > ul > li:last-child u {
-    padding: 11px 20px;
-    line-height: 24px;
+    display: inline-flex;
+    min-width: 90px;
+    height: 40px;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: 0 18px;
+    line-height: 1;
   }
 
   header nav .nav-sections .default-content-wrapper > ul > li:last-child::after { display: none; }
@@ -458,15 +473,23 @@ header nav .search-wrapper .search-results mark {
   header nav[aria-expanded='true'] .nav-sections .default-content-wrapper > ul > li.nav-search-toggle {
     display: flex;
     align-items: center;
-    width: 150px;
+    width: 166px;
     padding: 0;
-    margin-right: -16px
   }
 
   header nav .nav-search-box {
     height: 40px;
-    padding: 0 10px;
+    padding: 0 14px;
     background: var(--color-card, #0d1120);
+  }
+
+  header nav .nav-tools button {
+    width: 40px;
+    height: 40px;
+  }
+
+  header nav .nav-tools .nav-theme-toggle {
+    margin-left: 12px;
   }
 
   /* desktop: the icon in the menu is used, the panel opens on the right */
