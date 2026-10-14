@@ -101,9 +101,9 @@ export default function decorate(block) {
     const body = document.createElement('div');
     body.className = 'badges-body';
     if (metaP) { metaP.className = 'badges-meta'; body.append(metaP); }
-    const h3 = document.createElement('h3');
-    h3.textContent = title;
-    body.append(h3);
+    const heading = document.createElement('h2');
+    heading.textContent = title;
+    body.append(heading);
     if (issuerP) { issuerP.className = 'badges-issuer'; body.append(issuerP); }
     const tags = detailsCell?.querySelector('ul');
     if (tags) { tags.className = 'badges-tags'; body.append(tags); }

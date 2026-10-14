@@ -36,7 +36,7 @@
   font-size: var(--body-font-size-xs, 14px);
 }
 
-.timeline .timeline-body h3 {
+.timeline .timeline-body :is(h2, h3) {
   margin: 0 0 8px;
   color: var(--timeline-text);
   font-size: 1.125rem;

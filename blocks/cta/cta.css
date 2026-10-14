@@ -34,6 +34,10 @@
   font-size: var(--body-font-size-s, 16px);
 }
 
+.cta .cta-content p > strong {
+  color: var(--cta-text);
+}
+
 .cta .button-container {
   display: flex;
   flex-wrap: wrap;

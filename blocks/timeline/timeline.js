@@ -4,6 +4,8 @@
  */
 export default function decorate(block) {
   const list = document.createElement('ol');
+  const titleLevel = block.closest('.section')
+    ?.querySelector(':scope > .default-content-wrapper h2') ? 3 : 2;
 
   [...block.children].forEach((row) => {
     const [dateCell, bodyCell] = row.children;
@@ -23,9 +25,9 @@ export default function decorate(block) {
         && p.textContent.trim() === p.firstElementChild.textContent.trim(),
     );
     if (titleP) {
-      const h3 = document.createElement('h3');
-      h3.textContent = titleP.textContent.trim();
-      titleP.replaceWith(h3);
+      const heading = document.createElement(`h${titleLevel}`);
+      heading.textContent = titleP.textContent.trim();
+      titleP.replaceWith(heading);
     }
 
     li.append(date, body);

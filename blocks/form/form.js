@@ -770,6 +770,8 @@ function buildField(field) {
 
   const input = type === 'textarea' ? buildTextArea(field) : buildInput(field);
 
+  if (label) input.setAttribute('aria-label', label);
+
   if (type === 'textarea') {
     wrapper.append(input);
   } else {

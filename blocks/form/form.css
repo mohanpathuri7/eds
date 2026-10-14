@@ -298,7 +298,7 @@
   align-items: center;
   height: 58px;
   margin: 0;
-  color: #6b7488;
+  color: var(--color-muted, #9aa3b8);
   font-size: var(--body-font-size-s);
   font-weight: 400;
   line-height: 1.2;

@@ -7,8 +7,13 @@
   --blog-border: var(--color-border, #262c44);
   --blog-surface: var(--color-surface, #121729);
   --blog-bg: var(--background-color, #0b0e1a);
+  --blog-topic-text: #00576b;
 
   color: var(--blog-text);
+}
+
+:root[data-theme='dark'] .blog {
+  --blog-topic-text: var(--blog-accent);
 }
 
 .blog [hidden] {
@@ -148,7 +153,7 @@
   padding: 3px 10px;
   border-radius: 999px;
   background: color-mix(in srgb, var(--blog-accent) 14%, transparent);
-  color: var(--blog-accent);
+  color: var(--blog-topic-text);
   font-weight: 600;
 }
 
@@ -211,7 +216,7 @@
   margin: 32px auto 0;
   padding: 11px 26px;
   border: 1px solid var(--blog-border);
-  border-radius: 8px;
+  border-radius: 999px;
   background: transparent;
   color: var(--blog-text);
   font: inherit;

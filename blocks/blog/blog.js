@@ -90,7 +90,7 @@ function parseRow(row, index) {
   };
 }
 
-function buildCard(post, index) {
+function buildCard(post, index, titleLevel) {
   const li = document.createElement('li');
   li.className = 'blog-item';
   if (index === 0) li.classList.add('blog-featured');
@@ -103,7 +103,7 @@ function buildCard(post, index) {
           <span class="blog-topic"></span>
           <span class="blog-time"></span>
         </p>
-        <h3 class="blog-card-title"><button type="button" class="blog-open"></button></h3>
+        <h${titleLevel} class="blog-card-title"><button type="button" class="blog-open"></button></h${titleLevel}>
         <p class="blog-card-excerpt"></p>
         <span class="blog-card-cta" aria-hidden="true">Read the article</span>
       </div>
@@ -125,6 +125,8 @@ function buildCard(post, index) {
 
 export default function decorate(block) {
   const posts = [...block.children].map(parseRow).filter(Boolean);
+  const headingLevel = block.closest('.section')
+    ?.querySelector(':scope > .default-content-wrapper h2') ? 3 : 2;
   block.textContent = '';
   if (!posts.length) return;
 
@@ -164,7 +166,7 @@ export default function decorate(block) {
   const grid = document.createElement('ul');
   grid.className = 'blog-grid';
   posts.forEach((post, i) => {
-    post.el = buildCard(post, i);
+    post.el = buildCard(post, i, headingLevel);
     grid.append(post.el);
   });
 

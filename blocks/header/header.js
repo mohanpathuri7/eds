@@ -251,7 +251,15 @@ function setupSearchToggle(nav, navSections) {
   list.insertBefore(li, list.lastElementChild);
   searchBox.remove();
 
-  // Mobile keeps a search button beside the theme control.
+  // Keep the search field in the desktop navigation, but place it under the
+  // header on mobile when the search button is activated.
+  const placeSearchInput = () => {
+    if (isDesktop.matches) li.append(inlineSearch);
+    else nav.append(inlineSearch);
+  };
+  placeSearchInput();
+  isDesktop.addEventListener('change', placeSearchInput);
+
   let tools = nav.querySelector('.nav-tools');
   if (!tools) {
     tools = document.createElement('div');
@@ -263,6 +271,7 @@ function setupSearchToggle(nav, navSections) {
   const icon = '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>';
   mobile.innerHTML = `<button type="button" aria-label="Search" aria-controls="nav-search-panel">${icon}</button>`;
   tools.append(mobile);
+  const mobileButton = mobile.querySelector('button');
 
   // Keep results directly in the nav so the panel can overlay the page.
   nav.append(panel);
@@ -274,22 +283,38 @@ function setupSearchToggle(nav, navSections) {
   input.addEventListener('focus', () => setOpen(input.value.length >= 3));
   input.addEventListener('input', () => setOpen(input.value.length >= 3));
 
-  mobile.querySelector('button').addEventListener('click', () => {
-    if (!isDesktop.matches && nav.getAttribute('aria-expanded') !== 'true') {
-      toggleMenu(nav, navSections);
+  mobileButton.addEventListener('click', () => {
+    const open = !nav.classList.contains('mobile-search-open');
+    if (open && nav.getAttribute('aria-expanded') === 'true') {
+      toggleMenu(nav, navSections, true);
     }
-    input.focus();
+    nav.classList.toggle('mobile-search-open', open);
+    mobileButton.setAttribute('aria-expanded', String(open));
+    setOpen(open && input.value.length >= 3);
+    if (open) input.focus();
   });
 
   document.addEventListener('keydown', (e) => {
-    if (e.code === 'Escape' && nav.classList.contains('search-open')) {
+    if (e.code === 'Escape' && nav.classList.contains('mobile-search-open')) {
+      nav.classList.remove('mobile-search-open');
+      mobileButton.setAttribute('aria-expanded', 'false');
+      setOpen(false);
+      mobileButton.focus();
+    } else if (e.code === 'Escape' && nav.classList.contains('search-open')) {
       setOpen(false);
     }
   });
 
   document.addEventListener('click', (e) => {
-    if (!panel.contains(e.target) && !li.contains(e.target) && !mobile.contains(e.target)) {
+    if (
+      !panel.contains(e.target)
+      && !li.contains(e.target)
+      && !inlineSearch.contains(e.target)
+      && !mobile.contains(e.target)
+    ) {
       setOpen(false);
+      nav.classList.remove('mobile-search-open');
+      mobileButton.setAttribute('aria-expanded', 'false');
     }
   });
 }

@@ -87,6 +87,7 @@ function renderResult(result, searchTerms, titleTag) {
   const li = document.createElement('li');
   const a = document.createElement('a');
   a.href = result.path;
+  if (!result.title && !result.description) a.setAttribute('aria-label', result.path);
   if (result.image) {
     const wrapper = document.createElement('div');
     wrapper.className = 'search-result-image';
@@ -97,11 +98,8 @@ function renderResult(result, searchTerms, titleTag) {
   if (result.title) {
     const title = document.createElement(titleTag);
     title.className = 'search-result-title';
-    const link = document.createElement('a');
-    link.href = result.path;
-    link.textContent = result.title;
-    highlightTextElements(searchTerms, [link]);
-    title.append(link);
+    title.textContent = result.title;
+    highlightTextElements(searchTerms, [title]);
     a.append(title);
   }
   if (result.description) {
@@ -213,8 +211,8 @@ function searchResultsContainer(block) {
   results.className = 'search-results';
   results.dataset.h = findNextHeading(block);
 
-  // add ARIA live region for screen reader announcements
-  results.setAttribute('role', 'status');
+  // Keep the list's implicit semantics while announcing updated results.
+  results.setAttribute('aria-label', 'Search results');
   results.setAttribute('aria-live', 'polite');
   results.setAttribute('aria-atomic', true);
 

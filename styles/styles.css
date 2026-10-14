@@ -9,11 +9,11 @@
   --color-card: #fff;
   --color-border: #e2e8f0;
   --color-primary: #4f46e5;
-  --color-accent: #087f9c;
+  --color-accent: #006b83;
   --color-chip: #5146c8;
-  --color-muted: #64748b;
+  --color-muted: #5b6678;
   --color-text: #111827;
-  --color-link: #087f9c;
+  --color-link: #006b83;
 
   /* Boilerplate variables mapped to the tokens */
   --background-color: var(--color-bg);
@@ -92,7 +92,12 @@ h3 {
   line-height: 1.2;
 }
 
-main > .section h2 {
+main > .section > .default-content-wrapper h2 {
+  margin: 0 0 24px;
+  font-size: var(--heading-font-size-l);
+}
+
+main > .section .page-title {
   margin: 0 0 24px;
   font-size: var(--heading-font-size-l);
 }

@@ -163,6 +163,16 @@ export function decorateMain(main) {
   decorateSections(main);
   decorateBlocks(main);
   decorateButtons(main);
+  if (!main.querySelector('h1')) {
+    const pageTitle = main.querySelector('h2');
+    if (pageTitle) {
+      const heading = document.createElement('h1');
+      [...pageTitle.attributes].forEach(({ name, value }) => heading.setAttribute(name, value));
+      heading.classList.add('page-title');
+      heading.replaceChildren(...pageTitle.childNodes);
+      pageTitle.replaceWith(heading);
+    }
+  }
 }
 
 /**
