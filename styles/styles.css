@@ -118,7 +118,7 @@ a:hover {
 /* Sections: consistent vertical rhythm, aligned to the 1200px container */
 main > .section {
   margin: 0;
-  padding: 56px 0;
+  padding: 50px 0;
 }
 
 main > .section > div {
@@ -185,4 +185,8 @@ main{
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.section > div > h1{
+    margin: 0 0 0.2em;
 }
