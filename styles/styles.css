@@ -54,6 +54,7 @@
 :root[data-theme='dark'] {
   color-scheme: dark;
 
+  --form-error-color: #ff6b6b;
   --color-bg: #0b0e1a;
   --color-surface: #111729;
   --color-card: #0d1120;

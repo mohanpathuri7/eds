@@ -152,6 +152,33 @@ header nav .nav-sections .default-content-wrapper > ul > li:last-child u {
   color: #fff;
 }
 
+@media (width < 900px) {
+  header nav[aria-expanded='true'] .nav-sections .default-content-wrapper > ul > li {
+    padding: 0;
+  }
+
+  header nav[aria-expanded='true'] .nav-sections .default-content-wrapper > ul > li > a {
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 8px;
+    touch-action: manipulation;
+  }
+
+  header nav[aria-expanded='true'] .nav-sections .default-content-wrapper > ul > li:last-child {
+    padding-top: 24px;
+  }
+
+  header nav[aria-expanded='true'] .nav-sections .default-content-wrapper > ul > li:last-child > a {
+    display: inline-block;
+    width: auto;
+    min-height: 0;
+    padding: 10px 20px;
+  }
+}
+
 /* tools (theme toggle goes here) */
 header nav .nav-tools {
   grid-area: tools;
