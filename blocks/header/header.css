@@ -148,7 +148,7 @@ header nav .nav-sections .default-content-wrapper > ul > li:last-child u {
   border-radius: 999px;
   background: linear-gradient(110deg, var(--color-primary, #6366f1), var(--color-accent, #22d3ee));
   font-size: 16px;
-  font-weight: 700;
+  font-weight: 500;
   color: #fff;
 }
 
@@ -541,7 +541,7 @@ header nav .search-wrapper .search-results mark {
   }
 
   header nav .nav-tools .nav-theme-toggle {
-    margin-left: 12px;
+    margin-left: 7.5px;
   }
 
   /* desktop: the icon in the menu is used, the panel opens on the right */
