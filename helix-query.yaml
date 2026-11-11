@@ -4,6 +4,11 @@ indices:
       - /en/**
     exclude:
       - /en/snippets/**
+      - '/footer'
+      - '/nav'
+      - '/header'
+      - '/**/footer'
+      - '/**/nav'
     target: /query-index.json
     properties:
       author:
